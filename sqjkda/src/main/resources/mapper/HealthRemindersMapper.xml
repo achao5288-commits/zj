@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthRemindersMapper">
+
+    <resultMap type="com.yq.spbYq.domain.HealthRemindersEntity" id="HealthRemindersMap">
+        <result property="id" column="reminder_id" jdbcType="INTEGER"/>
+        <result property="reminderId" column="reminder_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="recordId" column="record_id" jdbcType="INTEGER"/>
+        <result property="reminderType" column="reminder_type" jdbcType="VARCHAR"/>
+        <result property="reminderName" column="reminder_name" jdbcType="VARCHAR"/>
+        <result property="dueDate" column="due_date" jdbcType="VARCHAR"/>
+        <result property="dueTime" column="due_time" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+        <result property="recurrencePattern" column="recurrence_pattern" jdbcType="VARCHAR"/>
+        <result property="recurrenceEnd" column="recurrence_end" jdbcType="VARCHAR"/>
+        <result property="notes" column="notes" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
+        <result property="completedAt" column="completed_at" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select reminder_id,
+               user_id,
+               record_id,
+               reminder_type,
+               reminder_name,
+               due_date,
+               due_time,
+               status,
+               priority,
+               recurrence_pattern,
+               recurrence_end,
+               notes,
+               created_at,
+               updated_at,
+               completed_at
+        from health_reminders
+    </sql>
+    <sql id="condition">
+        <if test="healthReminders.id != null">
+            and reminder_id = #{healthReminders.id}
+        </if>
+        <if test="healthReminders.reminderId != null">
+            and reminder_id = #{healthReminders.reminderId}
+        </if>
+        <if test="healthReminders.userId != null">
+            and user_id = #{healthReminders.userId}
+        </if>
+        <if test="healthReminders.recordId != null">
+            and record_id = #{healthReminders.recordId}
+        </if>
+        <if test="healthReminders.reminderType != null">
+            and reminder_type = #{healthReminders.reminderType}
+        </if>
+        <if test="healthReminders.reminderName != null and healthReminders.reminderName != ''">
+            and reminder_name = #{healthReminders.reminderName}
+        </if>
+        <if test="healthReminders.dueDate != null and healthReminders.dueDate != ''">
+            and due_date = #{healthReminders.dueDate}
+        </if>
+        <if test="healthReminders.dueTime != null and healthReminders.dueTime != ''">
+            and due_time = #{healthReminders.dueTime}
+        </if>
+        <if test="healthReminders.status != null">
+            and status = #{healthReminders.status}
+        </if>
+        <if test="healthReminders.priority != null">
+            and priority = #{healthReminders.priority}
+        </if>
+        <if test="healthReminders.recurrencePattern != null and healthReminders.recurrencePattern != ''">
+            and recurrence_pattern = #{healthReminders.recurrencePattern}
+        </if>
+        <if test="healthReminders.recurrenceEnd != null and healthReminders.recurrenceEnd != ''">
+            and recurrence_end = #{healthReminders.recurrenceEnd}
+        </if>
+        <if test="healthReminders.notes != null and healthReminders.notes != ''">
+            and notes = #{healthReminders.notes}
+        </if>
+        <if test="healthReminders.createdAt != null and healthReminders.createdAt != ''">
+            and created_at = #{healthReminders.createdAt}
+        </if>
+        <if test="healthReminders.updatedAt != null and healthReminders.updatedAt != ''">
+            and updated_at = #{healthReminders.updatedAt}
+        </if>
+        <if test="healthReminders.completedAt != null and healthReminders.completedAt != ''">
+            and completed_at = #{healthReminders.completedAt}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="HealthRemindersMap">
+        <include refid="baseSql"></include>
+        <where>
+            reminder_id = #{id}
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="HealthRemindersMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from health_reminders
+        <where>
+            <if test="id != null">
+                and reminder_id = #{id}
+            </if>
+            <if test="reminderId != null">
+                and reminder_id = #{reminderId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="recordId != null">
+                and record_id = #{recordId}
+            </if>
+            <if test="reminderType != null">
+                and reminder_type = #{reminderType}
+            </if>
+            <if test="reminderName != null and reminderName != ''">
+                and reminder_name = #{reminderName}
+            </if>
+            <if test="dueDate != null and dueDate != ''">
+                and due_date = #{dueDate}
+            </if>
+            <if test="dueTime != null and dueTime != ''">
+                and due_time = #{dueTime}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="priority != null">
+                and priority = #{priority}
+            </if>
+            <if test="recurrencePattern != null and recurrencePattern != ''">
+                and recurrence_pattern = #{recurrencePattern}
+            </if>
+            <if test="recurrenceEnd != null and recurrenceEnd != ''">
+                and recurrence_end = #{recurrenceEnd}
+            </if>
+            <if test="notes != null and notes != ''">
+                and notes = #{notes}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="completedAt != null and completedAt != ''">
+                and completed_at = #{completedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="reminderId" useGeneratedKeys="true">
+        insert into health_reminders(user_id, record_id, reminder_type, reminder_name, due_date, due_time, status,
+                                     priority, recurrence_pattern, recurrence_end, notes)
+        values (#{userId}, #{recordId}, #{reminderType}, #{reminderName}, #{dueDate}, #{dueTime}, #{status},
+                #{priority}, #{recurrencePattern}, #{recurrenceEnd}, #{notes})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="reminderId" useGeneratedKeys="true">
+        insert into health_reminders(user_id, record_id, reminder_type, reminder_name, due_date, due_time, status,
+        priority, recurrence_pattern, recurrence_end, notes, created_at, updated_at, completed_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.recordId}, #{entity.reminderType}, #{entity.reminderName}, #{entity.dueDate},
+            #{entity.dueTime}, #{entity.status}, #{entity.priority}, #{entity.recurrencePattern},
+            #{entity.recurrenceEnd}, #{entity.notes}, #{entity.createdAt}, #{entity.updatedAt}, #{entity.completedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="reminderId" useGeneratedKeys="true">
+        insert into health_reminders(user_id, record_id, reminder_type, reminder_name, due_date, due_time, status,
+        priority, recurrence_pattern, recurrence_end, notes, created_at, updated_at, completed_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.recordId}, #{entity.reminderType}, #{entity.reminderName}, #{entity.dueDate},
+            #{entity.dueTime}, #{entity.status}, #{entity.priority}, #{entity.recurrencePattern},
+            #{entity.recurrenceEnd}, #{entity.notes}, #{entity.createdAt}, #{entity.updatedAt}, #{entity.completedAt})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        record_id = values(record_id),
+        reminder_type = values(reminder_type),
+        reminder_name = values(reminder_name),
+        due_date = values(due_date),
+        due_time = values(due_time),
+        status = values(status),
+        priority = values(priority),
+        recurrence_pattern = values(recurrence_pattern),
+        recurrence_end = values(recurrence_end),
+        notes = values(notes),
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        completed_at = values(completed_at)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update health_reminders
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="recordId != null">
+                record_id = #{recordId},
+            </if>
+            <if test="reminderType != null">
+                reminder_type = #{reminderType},
+            </if>
+            <if test="reminderName != null and reminderName != ''">
+                reminder_name = #{reminderName},
+            </if>
+            <if test="dueDate != null and dueDate != ''">
+                due_date = #{dueDate},
+            </if>
+            <if test="dueTime != null and dueTime != ''">
+                due_time = #{dueTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="priority != null">
+                priority = #{priority},
+            </if>
+            <if test="recurrencePattern != null and recurrencePattern != ''">
+                recurrence_pattern = #{recurrencePattern},
+            </if>
+            <if test="recurrenceEnd != null and recurrenceEnd != ''">
+                recurrence_end = #{recurrenceEnd},
+            </if>
+            <if test="notes != null and notes != ''">
+                notes = #{notes},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at = #{updatedAt},
+            </if>
+            <if test="completedAt != null and completedAt != ''">
+                completed_at = #{completedAt},
+            </if>
+        </set>
+        where reminder_id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from health_reminders
+        where reminder_id = #{id}
+    </delete>
+
+</mapper>
+

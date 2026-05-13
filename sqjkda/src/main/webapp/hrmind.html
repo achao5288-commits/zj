@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>档案提醒 - 社区档案管理平台</title>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2c7a7b;
+      --secondary-color: #718096;
+      --success-color: #38a169;
+      --info-color: #319795;
+      --warning-color: #d69e2e;
+      --danger-color: #e53e3e;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8f9fc 0%, #e6f2f2 100%);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: var(--primary-color);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .content-container {
+      padding: 2rem;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(44, 122, 123, 0.1);
+      margin-top: 2rem;
+      border: 1px solid rgba(44, 122, 123, 0.1);
+    }
+
+    .user-info {
+      padding: 0.85rem 1.75rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      margin-right: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      box-shadow: 0 4px 15px rgba(44, 122, 123, 0.1);
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      box-shadow: 0 5px 15px rgba(44, 122, 123, 0.3);
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.4s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(44, 122, 123, 0.4);
+      background: var(--info-color);
+    }
+
+    .btn-outline-primary {
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.4s ease;
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--primary-color);
+      border-color: transparent;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(44, 122, 123, 0.4);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success-color);
+      border: none;
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.4s ease;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(56, 161, 105, 0.4);
+    }
+
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      background: rgba(44, 122, 123, 0.05);
+      color: var(--primary-color);
+      font-weight: 600;
+      border-bottom: 2px solid rgba(44, 122, 123, 0.1);
+    }
+
+    .alert-info {
+      background: rgba(44, 122, 123, 0.1);
+      border: 1px solid rgba(44, 122, 123, 0.2);
+      color: var(--primary-color);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(44, 122, 123, 0.25);
+    }
+
+    .btn-outline-light {
+      color: #fff;
+      border-color: #fff;
+    }
+
+    .btn-outline-light:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .form-label {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    select.form-control {
+      cursor: pointer;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-info {
+      background: var(--info-color);
+      border: none;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--danger-color);
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background: #c53030;
+    }
+  </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <i class="bi bi-building me-2"></i>社区档案管理平台
+    </a>
+    <div class="d-flex align-items-center">
+      <div class="user-info" id="userInfo">
+        未登录
+      </div>
+      <button class="btn btn-outline-light" onclick="logout()">
+        <i class="bi bi-box-arrow-right me-2"></i>退出登录
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- 主要内容 -->
+<div class="container">
+  <div class="content-container">
+    <h2 class="mb-4">档案提醒</h2>
+    <div class="alert alert-info">
+      此模块用于设置和管理档案相关提醒事项。
+    </div>
+    <!-- 健康提醒功能区块开始 -->
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="showAddRemindForm()">新增健康提醒</button>
+    </div>
+    <!-- 查询条件输入区 -->
+    <form class="row g-2 mb-3" id="searchForm" onsubmit="searchReminds(event)">
+      <div class="col-md-1">
+        <input type="text" class="form-control" id="searchReminderId" placeholder="提醒ID">
+      </div>
+      <div class="col-md-1">
+        <input type="text" class="form-control" id="searchUserId" placeholder="用户ID">
+      </div>
+      <div class="col-md-1">
+        <input type="text" class="form-control" id="searchRecordId" placeholder="记录ID">
+      </div>
+      <div class="col-md-2">
+        <input type="text" class="form-control" id="searchReminderType" placeholder="提醒类型">
+      </div>
+      <div class="col-md-2">
+        <input type="text" class="form-control" id="searchReminderName" placeholder="提醒名称">
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="form-control" id="searchDueDate" placeholder="到期日期">
+      </div>
+      <div class="col-md-1">
+        <input type="text" class="form-control" id="searchStatus" placeholder="状态">
+      </div>
+      <div class="col-md-1">
+        <input type="text" class="form-control" id="searchPriority" placeholder="优先级">
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">查询</button>
+      </div>
+      <div class="col-md-1">
+        <button type="button" class="btn btn-secondary w-100" onclick="resetSearch()">重置</button>
+      </div>
+    </form>
+    <table class="table table-bordered" id="remindersTable">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>用户ID</th>
+        <th>记录ID</th>
+        <th>提醒类型</th>
+        <th>提醒名称</th>
+        <th>到期日期</th>
+        <th>到期时间</th>
+        <th>状态</th>
+        <th>优先级</th>
+        <th>备注</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <!-- 内嵌编辑/新增表单，仿照健康记录页面 -->
+    <div id="remindForm" style="display:none;max-width:500px;margin-top:30px;">
+      <h5 id="formTitle">新增健康提醒</h5>
+      <form onsubmit="submitForm(event)">
+        <input type="hidden" id="reminderId">
+        <div class="mb-2">
+          <label>用户ID:</label>
+          <input type="number" class="form-control" id="remindUserId" required>
+        </div>
+        <div class="mb-2">
+          <label>记录ID:</label>
+          <select class="form-control" id="remindRecordId" required>
+            <option value="">请选择记录</option>
+            <!-- JS动态填充 -->
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>提醒类型:</label>
+          <select class="form-control" id="reminderType" required>
+            <option value="">请选择提醒类型</option>
+            <option value="medication">用药</option>
+            <option value="checkup">检查</option>
+            <option value="followup">复诊</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>提醒名称:</label>
+          <input type="text" class="form-control" id="reminderName" required>
+        </div>
+        <div class="mb-2">
+          <label>到期日期:</label>
+          <input type="date" class="form-control" id="dueDate" required>
+        </div>
+        <div class="mb-2">
+          <label>到期时间:</label>
+          <input type="time" class="form-control" id="dueTime" required>
+        </div>
+        <div class="mb-2">
+          <label>状态:</label>
+          <select class="form-control" id="status" required>
+            <option value="">请选择状态</option>
+            <option value="pending">待处理</option>
+            <option value="completed">已完成</option>
+            <option value="snoozed">已取消</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>优先级:</label>
+          <select class="form-control" id="priority" required>
+            <option value="">请选择优先级</option>
+            <option value="high">高</option>
+            <option value="medium">中</option>
+            <option value="low">低</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>备注:</label>
+          <input type="text" class="form-control" id="notes">
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn btn-secondary" onclick="hideForm()">取消</button>
+      </form>
+    </div>
+    <!-- 健康提醒功能区块结束 -->
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 通用数据提取函数
+  function extractList(data) {
+    if (Array.isArray(data.data)) return data.data;
+    if (data.data && Array.isArray(data.data.content)) return data.data.content;
+    if (Array.isArray(data.content)) return data.content;
+    if (data.content && Array.isArray(data.content.content)) return data.content.content;
+    if (Array.isArray(data)) return data;
+    return [];
+  }
+
+  // 权限控制，查询按钮始终可用
+  function setButtonPermission() {
+    const userInfoStr = localStorage.getItem('userInfo');
+    if (!userInfoStr) return;
+    const user = JSON.parse(userInfoStr);
+    if (user.userType == 1) {
+      // 只禁用用户ID输入框
+      const userIdInput = document.getElementById('searchUserId');
+      if (userIdInput) userIdInput.disabled = true;
+      // 允许其他输入和查询按钮可用
+      document.querySelectorAll('input,select,textarea,button[type=submit]').forEach(el => {
+        if (el.id !== 'searchUserId') el.disabled = false;
+      });
+      // 只隐藏增删改按钮
+      document.querySelectorAll('.btn-info,.btn-danger,.btn-success').forEach(btn => btn.style.display = 'none');
+    }
+  }
+
+  window.onload = function() {
+    setButtonPermission();
+    fetchReminds();
+    // 查询按钮事件绑定
+    const searchBtn = document.querySelector('form#searchForm button[type=submit]');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', searchReminds);
+    }
+    loadHealthRecords();
+  };
+
+  // 加载健康记录填充记录ID下拉框（改为分页接口）
+  function loadHealthRecords(selectedId) {
+    fetch('/spbYq/healthRecords/queryByPage?page=1&size=1000')
+            .then(res => res.json())
+            .then(data => {
+              const select = document.getElementById('remindRecordId');
+              select.innerHTML = '<option value="">请选择记录</option>';
+              let list = [];
+              if (Array.isArray(data.data)) {
+                list = data.data;
+              } else if (data.data && Array.isArray(data.data.content)) {
+                list = data.data.content;
+              } else if (Array.isArray(data.content)) {
+                list = data.content;
+              } else if (data.content && Array.isArray(data.content.content)) {
+                list = data.content.content;
+              }
+              list.forEach(r => {
+                const id = r.recordId || r.record_id;
+                const name = r.reportName || r.report_name || '';
+                select.innerHTML += `<option value="${id}" ${selectedId == id ? 'selected' : ''}>${id} - ${name}</option>`;
+              });
+            });
+  }
+
+  // 退出登录
+  function logout() {
+    localStorage.removeItem('userInfo');
+    window.location.href = 'login.html';
+  }
+
+  // 健康提醒功能JS
+  const remindApiBase = '/spbYq/healthReminders';
+
+  function fetchReminds(params = {}) {
+    let url = remindApiBase + '/queryByPage?page=1&size=20';
+    const searchParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key]) searchParams.append(key, params[key]);
+    }
+    if (searchParams.toString()) {
+      url += '&' + searchParams.toString();
+    }
+    fetch(url)
+            .then(res => res.json())
+            .then(data => {
+              const list = extractList(data);
+              const tbody = document.querySelector('#remindersTable tbody');
+              tbody.innerHTML = '';
+              if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" class="text-center">暂无数据</td></tr>';
+                return;
+              }
+              list.forEach(r => {
+                tbody.innerHTML += `
+            <tr>
+              <td>${r.reminderId}</td>
+              <td>${r.userId}</td>
+              <td>${r.recordId}</td>
+              <td>${r.reminderType}</td>
+              <td>${r.reminderName}</td>
+              <td>${r.dueDate ? r.dueDate.substring(0,10) : ''}</td>
+              <td>${r.dueTime || ''}</td>
+              <td>${r.status || ''}</td>
+              <td>${r.priority || ''}</td>
+              <td>${r.notes || ''}</td>
+              <td>
+                <button class='btn btn-sm btn-info' onclick="editRemind(${r.reminderId})">编辑</button>
+                <button class='btn btn-sm btn-danger' onclick="deleteRemind(${r.reminderId})">删除</button>
+              </td>
+            </tr>
+          `;
+              });
+            });
+  }
+
+  function showAddRemindForm() {
+    document.getElementById('formTitle').innerText = '新增健康提醒';
+    document.getElementById('remindForm').style.display = '';
+    document.getElementById('reminderId').value = '';
+    document.getElementById('remindUserId').value = '';
+    // 记录ID下拉框重置
+    loadHealthRecords();
+    document.getElementById('reminderType').value = '';
+    document.getElementById('reminderName').value = '';
+    document.getElementById('dueDate').value = '';
+    document.getElementById('dueTime').value = '';
+    document.getElementById('status').value = '';
+    document.getElementById('priority').value = '';
+    document.getElementById('notes').value = '';
+  }
+
+  function hideForm() {
+    document.getElementById('remindForm').style.display = 'none';
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const remind = {
+      reminderId: document.getElementById('reminderId').value,
+      userId: document.getElementById('remindUserId').value,
+      recordId: document.getElementById('remindRecordId').value,
+      reminderType: document.getElementById('reminderType').value,
+      reminderName: document.getElementById('reminderName').value,
+      dueDate: document.getElementById('dueDate').value,
+      dueTime: document.getElementById('dueTime').value,
+      status: document.getElementById('status').value,
+      priority: document.getElementById('priority').value,
+      notes: document.getElementById('notes').value
+    };
+    const url = remind.reminderId ? remindApiBase + '/edit' : remindApiBase + '/add';
+    const formData = new URLSearchParams();
+    for (const key in remind) {
+      if (remind[key] !== undefined && remind[key] !== null) {
+        formData.append(key, remind[key]);
+      }
+    }
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    })
+            .then(res => res.json())
+            .then(data => {
+              if (data.code === 1) {
+                alert('操作成功');
+                hideForm();
+                fetchReminds();
+              } else {
+                alert('操作失败');
+              }
+            });
+  }
+
+  function editRemind(id) {
+    fetch(remindApiBase + '/queryById/' + id)
+      .then(res => res.json())
+      .then(data => {
+        // 先清空表单
+        document.getElementById('reminderId').value = '';
+        document.getElementById('remindUserId').value = '';
+        document.getElementById('remindRecordId').value = '';
+        document.getElementById('reminderType').value = '';
+        document.getElementById('reminderName').value = '';
+        document.getElementById('dueDate').value = '';
+        document.getElementById('dueTime').value = '';
+        document.getElementById('status').value = '';
+        document.getElementById('priority').value = '';
+        document.getElementById('notes').value = '';
+        const r = data.data || data.content;
+        if (data.code === 1 && r) {
+          document.getElementById('formTitle').innerText = '编辑健康提醒';
+          document.getElementById('remindForm').style.display = '';
+          if (document.getElementById('reminderId')) document.getElementById('reminderId').value = r.reminderId || r.reminder_id || '';
+          if (document.getElementById('remindUserId')) document.getElementById('remindUserId').value = r.userId || r.user_id || '';
+          loadHealthRecords(r.recordId || r.record_id || '');
+          if (document.getElementById('reminderType')) document.getElementById('reminderType').value = r.reminderType || r.reminder_type || '';
+          if (document.getElementById('reminderName')) document.getElementById('reminderName').value = r.reminderName || r.reminder_name || '';
+          if (document.getElementById('dueDate')) document.getElementById('dueDate').value = (r.dueDate || r.due_date) ? (r.dueDate || r.due_date).substring(0,10) : '';
+          if (document.getElementById('dueTime')) document.getElementById('dueTime').value = r.dueTime || r.due_time || '';
+          if (document.getElementById('status')) document.getElementById('status').value = r.status || '';
+          if (document.getElementById('priority')) document.getElementById('priority').value = r.priority || '';
+          if (document.getElementById('notes')) document.getElementById('notes').value = r.notes || '';
+        } else {
+          alert(data.msg || '获取数据失败');
+        }
+      })
+      .catch(err => {
+        alert('请求失败: ' + err);
+      });
+  }
+
+  function deleteRemind(id) {
+    if (!confirm('确定要删除该提醒吗？')) return;
+    fetch(remindApiBase + '/deleteById/' + id, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+              if (data.code === 1) {
+                alert('删除成功');
+                fetchReminds();
+              } else {
+                alert('删除失败');
+              }
+            });
+  }
+
+  // 查询按钮事件
+  function searchReminds(e) {
+    if (e) e.preventDefault();
+    const params = {
+      reminderId: document.getElementById('searchReminderId').value.trim(),
+      userId: document.getElementById('searchUserId').value.trim(),
+      recordId: document.getElementById('searchRecordId').value.trim(),
+      reminderType: document.getElementById('searchReminderType').value.trim(),
+      reminderName: document.getElementById('searchReminderName').value.trim(),
+      dueDate: document.getElementById('searchDueDate').value.trim(),
+      status: document.getElementById('searchStatus').value.trim(),
+      priority: document.getElementById('searchPriority').value.trim()
+    };
+    fetchReminds(params);
+  }
+
+  // 重置查询
+  function resetSearch() {
+    document.getElementById('searchReminderId').value = '';
+    document.getElementById('searchUserId').value = '';
+    document.getElementById('searchRecordId').value = '';
+    document.getElementById('searchReminderType').value = '';
+    document.getElementById('searchReminderName').value = '';
+    document.getElementById('searchDueDate').value = '';
+    document.getElementById('searchStatus').value = '';
+    document.getElementById('searchPriority').value = '';
+    fetchReminds();
+  }
+</script>
+</body>
+</html>

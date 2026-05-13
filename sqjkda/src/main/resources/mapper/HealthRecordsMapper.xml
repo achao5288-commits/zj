@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthRecordsMapper">
+
+    <resultMap type="com.yq.spbYq.domain.HealthRecordsEntity" id="HealthRecordsMap">
+        <result property="id" column="record_id" jdbcType="INTEGER"/>
+        <result property="recordId" column="record_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="recordType" column="record_type" jdbcType="VARCHAR"/>
+        <result property="reportName" column="report_name" jdbcType="VARCHAR"/>
+        <result property="reportDate" column="report_date" jdbcType="VARCHAR"/>
+        <result property="doctorName" column="doctor_name" jdbcType="VARCHAR"/>
+        <result property="summary" column="summary" jdbcType="VARCHAR"/>
+        <result property="isAbnormal" column="is_abnormal" jdbcType="INTEGER"/>
+        <result property="uploadTime" column="upload_time" jdbcType="VARCHAR"/>
+        <result property="lastViewed" column="last_viewed" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select record_id,
+               user_id,
+               record_type,
+               report_name,
+               report_date,
+               doctor_name,
+               summary,
+               is_abnormal,
+               upload_time,
+               last_viewed
+        from health_records
+    </sql>
+    <sql id="condition">
+        <if test="healthRecords.id != null">
+            and record_id = #{healthRecords.id}
+        </if>
+        <if test="healthRecords.recordId != null">
+            and record_id = #{healthRecords.recordId}
+        </if>
+        <if test="healthRecords.userId != null">
+            and user_id = #{healthRecords.userId}
+        </if>
+        <if test="healthRecords.recordType != null and healthRecords.recordType != ''">
+            and record_type = #{healthRecords.recordType}
+        </if>
+        <if test="healthRecords.reportName != null and healthRecords.reportName != ''">
+            and report_name = #{healthRecords.reportName}
+        </if>
+        <if test="healthRecords.reportDate != null and healthRecords.reportDate != ''">
+            and report_date = #{healthRecords.reportDate}
+        </if>
+        <if test="healthRecords.doctorName != null and healthRecords.doctorName != ''">
+            and doctor_name = #{healthRecords.doctorName}
+        </if>
+        <if test="healthRecords.summary != null and healthRecords.summary != ''">
+            and summary = #{healthRecords.summary}
+        </if>
+        <if test="healthRecords.isAbnormal != null">
+            and is_abnormal = #{healthRecords.isAbnormal}
+        </if>
+        <if test="healthRecords.uploadTime != null and healthRecords.uploadTime != ''">
+            and upload_time = #{healthRecords.uploadTime}
+        </if>
+        <if test="healthRecords.lastViewed != null and healthRecords.lastViewed != ''">
+            and last_viewed = #{healthRecords.lastViewed}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="HealthRecordsMap">
+        <include refid="baseSql"/>
+        <where>
+            record_id = #{id}
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="HealthRecordsMap">
+        <include refid="baseSql"/>
+        <where>
+            <if test="healthRecords.id != null">
+                and record_id = #{healthRecords.id}
+            </if>
+            <if test="healthRecords.recordId != null">
+                and record_id = #{healthRecords.recordId}
+            </if>
+            <if test="healthRecords.userId != null">
+                and user_id = #{healthRecords.userId}
+            </if>
+            <if test="healthRecords.recordType != null and healthRecords.recordType != ''">
+                and record_type = #{healthRecords.recordType}
+            </if>
+            <if test="healthRecords.reportName != null and healthRecords.reportName != ''">
+                and report_name = #{healthRecords.reportName}
+            </if>
+            <if test="healthRecords.reportDate != null and healthRecords.reportDate != ''">
+                and report_date = #{healthRecords.reportDate}
+            </if>
+            <if test="healthRecords.doctorName != null and healthRecords.doctorName != ''">
+                and doctor_name = #{healthRecords.doctorName}
+            </if>
+            <if test="healthRecords.summary != null and healthRecords.summary != ''">
+                and summary = #{healthRecords.summary}
+            </if>
+            <if test="healthRecords.isAbnormal != null">
+                and is_abnormal = #{healthRecords.isAbnormal}
+            </if>
+            <if test="healthRecords.uploadTime != null and healthRecords.uploadTime != ''">
+                and upload_time = #{healthRecords.uploadTime}
+            </if>
+            <if test="healthRecords.lastViewed != null and healthRecords.lastViewed != ''">
+                and last_viewed = #{healthRecords.lastViewed}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from health_records
+        <where>
+            <if test="recordId != null">
+                and record_id = #{recordId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="recordType != null and recordType != ''">
+                and record_type = #{recordType}
+            </if>
+            <if test="reportName != null and reportName != ''">
+                and report_name = #{reportName}
+            </if>
+            <if test="reportDate != null and reportDate != ''">
+                and report_date = #{reportDate}
+            </if>
+            <if test="doctorName != null and doctorName != ''">
+                and doctor_name = #{doctorName}
+            </if>
+            <if test="summary != null and summary != ''">
+                and summary = #{summary}
+            </if>
+            <if test="isAbnormal != null">
+                and is_abnormal = #{isAbnormal}
+            </if>
+            <if test="uploadTime != null and uploadTime != ''">
+                and upload_time = #{uploadTime}
+            </if>
+            <if test="lastViewed != null and lastViewed != ''">
+                and last_viewed = #{lastViewed}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="recordId" useGeneratedKeys="true">
+        insert into health_records(user_id, record_type, report_name, report_date, doctor_name, summary, is_abnormal,
+                                   upload_time, last_viewed)
+        values (#{userId}, #{recordType}, #{reportName}, #{reportDate}, #{doctorName}, #{summary}, #{isAbnormal},
+                #{uploadTime}, #{lastViewed})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="recordId" useGeneratedKeys="true">
+        insert into health_records(user_id, record_type, report_name, report_date, doctor_name, summary, is_abnormal,
+        upload_time, last_viewed)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.recordType}, #{entity.reportName}, #{entity.reportDate}, #{entity.doctorName},
+            #{entity.summary}, #{entity.isAbnormal}, #{entity.uploadTime}, #{entity.lastViewed})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="recordId" useGeneratedKeys="true">
+        insert into health_records(user_id, record_type, report_name, report_date, doctor_name, summary, is_abnormal,
+        upload_time, last_viewed)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.recordType}, #{entity.reportName}, #{entity.reportDate}, #{entity.doctorName},
+            #{entity.summary}, #{entity.isAbnormal}, #{entity.uploadTime}, #{entity.lastViewed})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        record_type = values(record_type),
+        report_name = values(report_name),
+        report_date = values(report_date),
+        doctor_name = values(doctor_name),
+        summary = values(summary),
+        is_abnormal = values(is_abnormal),
+        upload_time = values(upload_time),
+        last_viewed = values(last_viewed)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update health_records
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="recordType != null and recordType != ''">
+                record_type = #{recordType},
+            </if>
+            <if test="reportName != null and reportName != ''">
+                report_name = #{reportName},
+            </if>
+            <if test="reportDate != null and reportDate != ''">
+                report_date = #{reportDate},
+            </if>
+            <if test="doctorName != null and doctorName != ''">
+                doctor_name = #{doctorName},
+            </if>
+            <if test="summary != null and summary != ''">
+                summary = #{summary},
+            </if>
+            <if test="isAbnormal != null">
+                is_abnormal = #{isAbnormal},
+            </if>
+            <if test="uploadTime != null and uploadTime != ''">
+                upload_time = #{uploadTime},
+            </if>
+            <if test="lastViewed != null and lastViewed != ''">
+                last_viewed = #{lastViewed},
+            </if>
+        </set>
+        where record_id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from health_records
+        where record_id = #{id}
+    </delete>
+
+</mapper>
+

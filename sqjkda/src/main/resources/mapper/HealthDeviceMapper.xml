@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthDeviceMapper">
+
+    <resultMap id="BaseResultMap" type="com.yq.spbYq.domain.HealthDeviceDomain">
+        <id column="device_id" property="deviceId"/>
+        <result column="user_id" property="userId"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="device_brand" property="deviceBrand"/>
+        <result column="device_model" property="deviceModel"/>
+        <result column="device_sn" property="deviceSn"/>
+        <result column="connection_type" property="connectionType"/>
+        <result column="is_active" property="isActive"/>
+        <result column="last_sync_time" property="lastSyncTime"/>
+        <result column="bind_time" property="bindTime"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.yq.spbYq.domain.HealthDeviceDomain" useGeneratedKeys="true" keyProperty="deviceId">
+        INSERT INTO health_devices (user_id, device_name, device_type, device_brand, device_model, 
+                                    device_sn, connection_type, is_active, status)
+        VALUES (#{userId}, #{deviceName}, #{deviceType}, #{deviceBrand}, #{deviceModel},
+                #{deviceSn}, #{connectionType}, #{isActive}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.yq.spbYq.domain.HealthDeviceDomain">
+        UPDATE health_devices
+        <set>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="deviceBrand != null">device_brand = #{deviceBrand},</if>
+            <if test="deviceModel != null">device_model = #{deviceModel},</if>
+            <if test="deviceSn != null">device_sn = #{deviceSn},</if>
+            <if test="connectionType != null">connection_type = #{connectionType},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM health_devices WHERE device_id = #{deviceId}
+    </delete>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT * FROM health_devices WHERE device_id = #{deviceId}
+    </select>
+
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        SELECT * FROM health_devices WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="queryByPage" resultMap="BaseResultMap">
+        SELECT * FROM health_devices
+        <where>
+            <if test="device.userId != null">AND user_id = #{device.userId}</if>
+            <if test="device.deviceType != null and device.deviceType != ''">AND device_type = #{device.deviceType}</if>
+            <if test="device.isActive != null">AND is_active = #{device.isActive}</if>
+            <if test="device.status != null and device.status != ''">AND status = #{device.status}</if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByPage" resultType="int">
+        SELECT COUNT(*) FROM health_devices
+        <where>
+            <if test="device.userId != null">AND user_id = #{device.userId}</if>
+            <if test="device.deviceType != null and device.deviceType != ''">AND device_type = #{device.deviceType}</if>
+            <if test="device.isActive != null">AND is_active = #{device.isActive}</if>
+            <if test="device.status != null and device.status != ''">AND status = #{device.status}</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>病人数据可视化 - 健康管理系统</title>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2c7a7b;
+      --secondary-color: #718096;
+      --success-color: #38a169;
+      --info-color: #319795;
+      --warning-color: #d69e2e;
+      --danger-color: #e53e3e;
+      --light-green: #e6f2f2;
+      --lighter-green: #f0f8f8;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8f9fc 0%, #e6f2f2 100%);
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .navbar {
+      background: var(--primary-color);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .content-container {
+      padding: 2rem;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(44, 122, 123, 0.1);
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(44, 122, 123, 0.1);
+    }
+
+    .user-info {
+      padding: 0.85rem 1.75rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      margin-right: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      box-shadow: 0 4px 15px rgba(44, 122, 123, 0.1);
+    }
+
+    .stats-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f8f8 100%);
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(44, 122, 123, 0.08);
+      border: 1px solid rgba(44, 122, 123, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(44, 122, 123, 0.15);
+    }
+
+    .stats-icon {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .stats-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+      color: var(--secondary-color);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .chart-container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(44, 122, 123, 0.08);
+      border: 1px solid rgba(44, 122, 123, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .chart-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      border-left: 4px solid var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .filter-section {
+      background: linear-gradient(135deg, #f0f8f8 0%, #e6f2f2 100%);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(44, 122, 123, 0.1);
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      box-shadow: 0 5px 15px rgba(44, 122, 123, 0.3);
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.4s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(44, 122, 123, 0.4);
+      background: var(--info-color);
+    }
+
+    .btn-outline-light {
+      color: #fff;
+      border-color: #fff;
+    }
+
+    .btn-outline-light:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(44, 122, 123, 0.25);
+    }
+
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      background: rgba(44, 122, 123, 0.05);
+      color: var(--primary-color);
+      font-weight: 600;
+      border-bottom: 2px solid rgba(44, 122, 123, 0.1);
+    }
+
+    .badge-abnormal {
+      background-color: var(--danger-color);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+    }
+
+    .badge-normal {
+      background-color: var(--success-color);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <i class="bi bi-building me-2"></i>社区档案管理平台
+    </a>
+    <div class="d-flex align-items-center">
+      <div class="user-info" id="userInfo">
+        未登录
+      </div>
+      <button class="btn btn-outline-light" onclick="logout()">
+        <i class="bi bi-box-arrow-right me-2"></i>退出登录
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- 主要内容 -->
+<div class="container">
+  <div class="content-container">
+    <h2 class="mb-4"><i class="bi bi-graph-up me-2"></i>病人数据可视化</h2>
+    
+    <!-- 筛选区域 -->
+    <div class="filter-section">
+      <h5 class="mb-3" style="color: var(--primary-color); font-weight: 600;">
+        <i class="bi bi-funnel me-2"></i>数据筛选
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label" style="color: var(--primary-color); font-weight: 600;">用户ID</label>
+          <input type="number" class="form-control" id="filterUserId" placeholder="输入用户ID">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" style="color: var(--primary-color); font-weight: 600;">记录类型</label>
+          <select class="form-control" id="filterRecordType">
+            <option value="">全部类型</option>
+            <option value="体检">体检</option>
+            <option value="门诊">门诊</option>
+            <option value="住院">住院</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" style="color: var(--primary-color); font-weight: 600;">是否异常</label>
+          <select class="form-control" id="filterIsAbnormal">
+            <option value="">全部</option>
+            <option value="1">异常</option>
+            <option value="0">正常</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" onclick="loadData()">
+            <i class="bi bi-search me-2"></i>查询数据
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-file-earmark-medical"></i>
+          </div>
+          <div class="stats-number" id="totalRecords">0</div>
+          <div class="stats-label">总记录数</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="stats-number" id="normalRecords">0</div>
+          <div class="stats-label">正常记录</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <div class="stats-number" id="abnormalRecords">0</div>
+          <div class="stats-label">异常记录</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <div class="stats-number" id="uniqueUsers">0</div>
+          <div class="stats-label">用户数量</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h5 class="chart-title">记录类型分布</h5>
+          <canvas id="typeChart"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h5 class="chart-title">正常/异常比例</h5>
+          <canvas id="abnormalChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="chart-container">
+          <h5 class="chart-title">时间趋势（按月份）</h5>
+          <canvas id="trendChart" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="chart-container">
+      <h5 class="chart-title">详细数据</h5>
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">加载中...</span>
+        </div>
+        <p class="mt-3" style="color: var(--secondary-color);">正在加载数据...</p>
+      </div>
+      <table class="table table-hover" id="recordsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>用户ID</th>
+            <th>类型</th>
+            <th>报告名称</th>
+            <th>报告日期</th>
+            <th>医生</th>
+            <th>摘要</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="8" class="text-center" style="color: var(--secondary-color);">请点击"查询数据"按钮加载数据</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 图表实例
+  let typeChartInstance = null;
+  let abnormalChartInstance = null;
+  let trendChartInstance = null;
+
+  // 页面加载
+  $(document).ready(function() {
+    loadUserInfo();
+  });
+
+  // 加载用户信息
+  function loadUserInfo() {
+    var userInfoStr = localStorage.getItem('userInfo');
+    if (userInfoStr) {
+      try {
+        var user = JSON.parse(userInfoStr);
+        document.getElementById('userInfo').innerHTML = `<i class="bi bi-person-circle me-2"></i>欢迎，${user.username}`;
+      } catch (e) {
+        localStorage.removeItem('userInfo');
+        document.getElementById('userInfo').innerHTML = '<i class="bi bi-person-circle me-2"></i>未登录';
+      }
+    } else {
+      document.getElementById('userInfo').innerHTML = '<i class="bi bi-person-circle me-2"></i>未登录';
+    }
+  }
+
+  // 加载数据
+  function loadData() {
+    const userId = document.getElementById('filterUserId').value;
+    const recordType = document.getElementById('filterRecordType').value;
+    const isAbnormal = document.getElementById('filterIsAbnormal').value;
+
+    // 显示加载动画
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('recordsTable').style.display = 'none';
+
+    let url = '/spbYq/healthRecords/queryByPage?page=1&size=1000';
+    if (userId) url += '&userId=' + userId;
+    if (recordType) url += '&recordType=' + recordType;
+    if (isAbnormal) url += '&isAbnormal=' + isAbnormal;
+
+    fetch(url, {
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      const list = extractList(data);
+      
+      // 隐藏加载动画
+      document.getElementById('loadingSpinner').style.display = 'none';
+      document.getElementById('recordsTable').style.display = 'table';
+
+      // 更新统计卡片
+      updateStats(list);
+      
+      // 更新图表
+      updateCharts(list);
+      
+      // 更新表格
+      updateTable(list);
+    })
+    .catch(err => {
+      console.error('加载数据失败:', err);
+      document.getElementById('loadingSpinner').style.display = 'none';
+      document.getElementById('recordsTable').style.display = 'table';
+      alert('加载数据失败: ' + err.message);
+    });
+  }
+
+  // 提取数据列表
+  function extractList(data) {
+    if (Array.isArray(data.data)) return data.data;
+    if (data.data && Array.isArray(data.data.content)) return data.data.content;
+    if (Array.isArray(data.content)) return data.content;
+    if (data.content && Array.isArray(data.content.content)) return data.content.content;
+    if (Array.isArray(data)) return data;
+    return [];
+  }
+
+  // 更新统计卡片
+  function updateStats(list) {
+    const total = list.length;
+    const abnormal = list.filter(r => (r.isAbnormal !== undefined ? r.isAbnormal : r.is_abnormal) === 1).length;
+    const normal = total - abnormal;
+    const uniqueUsers = new Set(list.map(r => r.userId || r.user_id)).size;
+
+    document.getElementById('totalRecords').textContent = total;
+    document.getElementById('normalRecords').textContent = normal;
+    document.getElementById('abnormalRecords').textContent = abnormal;
+    document.getElementById('uniqueUsers').textContent = uniqueUsers;
+  }
+
+  // 更新图表
+  function updateCharts(list) {
+    // 记录类型分布
+    const typeCount = {};
+    list.forEach(r => {
+      const type = r.recordType || r.record_type || '未知';
+      typeCount[type] = (typeCount[type] || 0) + 1;
+    });
+
+    if (typeChartInstance) typeChartInstance.destroy();
+    const typeCtx = document.getElementById('typeChart').getContext('2d');
+    typeChartInstance = new Chart(typeCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(typeCount),
+        datasets: [{
+          data: Object.values(typeCount),
+          backgroundColor: [
+            '#2c7a7b',
+            '#38a169',
+            '#319795',
+            '#d69e2e',
+            '#e53e3e'
+          ],
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // 正常/异常比例
+    const abnormal = list.filter(r => (r.isAbnormal !== undefined ? r.isAbnormal : r.is_abnormal) === 1).length;
+    const normal = list.length - abnormal;
+
+    if (abnormalChartInstance) abnormalChartInstance.destroy();
+    const abnormalCtx = document.getElementById('abnormalChart').getContext('2d');
+    abnormalChartInstance = new Chart(abnormalCtx, {
+      type: 'pie',
+      data: {
+        labels: ['正常', '异常'],
+        datasets: [{
+          data: [normal, abnormal],
+          backgroundColor: ['#38a169', '#e53e3e'],
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // 时间趋势
+    const monthCount = {};
+    list.forEach(r => {
+      const date = r.reportDate || r.report_date;
+      if (date) {
+        const month = date.substring(0, 7); // YYYY-MM
+        monthCount[month] = (monthCount[month] || 0) + 1;
+      }
+    });
+
+    const sortedMonths = Object.keys(monthCount).sort();
+    const monthData = sortedMonths.map(m => monthCount[m]);
+
+    if (trendChartInstance) trendChartInstance.destroy();
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    trendChartInstance = new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: sortedMonths,
+        datasets: [{
+          label: '记录数量',
+          data: monthData,
+          borderColor: '#2c7a7b',
+          backgroundColor: 'rgba(44, 122, 123, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#2c7a7b',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  }
+
+  // 更新表格
+  function updateTable(list) {
+    const tbody = document.querySelector('#recordsTable tbody');
+    tbody.innerHTML = '';
+    
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="color: var(--secondary-color);">暂无数据</td></tr>';
+      return;
+    }
+
+    list.forEach((r, index) => {
+      const isAbnormal = (r.isAbnormal !== undefined ? r.isAbnormal : r.is_abnormal);
+      const statusBadge = isAbnormal === 1 
+        ? '<span class="badge-abnormal">异常</span>' 
+        : '<span class="badge-normal">正常</span>';
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${r.userId || r.user_id || ''}</td>
+          <td>${r.recordType || r.record_type || ''}</td>
+          <td>${r.reportName || r.report_name || ''}</td>
+          <td>${(r.reportDate || r.report_date) ? (r.reportDate || r.report_date).substring(0, 10) : ''}</td>
+          <td>${r.doctorName || r.doctor_name || ''}</td>
+          <td>${r.summary || ''}</td>
+          <td>${statusBadge}</td>
+        </tr>
+      `;
+    });
+  }
+
+  // 退出登录
+  function logout() {
+    localStorage.removeItem('userInfo');
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.AIHealthAnalysisMapper">
+
+    <resultMap type="com.yq.spbYq.domain.AIHealthAnalysisDomain" id="AIHealthAnalysisMap">
+        <result property="id" column="analysis_id"/>
+        <result property="analysisId" column="analysis_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="recordId" column="record_id"/>
+        <result property="analysisType" column="analysis_type"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="healthScore" column="health_score"/>
+        <result property="abnormalIndicators" column="abnormal_indicators"/>
+        <result property="aiSuggestion" column="ai_suggestion"/>
+        <result property="diseaseRiskPrediction" column="disease_risk_prediction"/>
+        <result property="lifestyleAdvice" column="lifestyle_advice"/>
+        <result property="dietAdvice" column="diet_advice"/>
+        <result property="exerciseAdvice" column="exercise_advice"/>
+        <result property="medicalAdvice" column="medical_advice"/>
+        <result property="analysisSummary" column="analysis_summary"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select analysis_id,
+               user_id,
+               record_id,
+               analysis_type,
+               risk_level,
+               health_score,
+               abnormal_indicators,
+               ai_suggestion,
+               disease_risk_prediction,
+               lifestyle_advice,
+               diet_advice,
+               exercise_advice,
+               medical_advice,
+               analysis_summary,
+               create_time,
+               update_time
+        from ai_health_analysis
+    </sql>
+
+    <insert id="insert" parameterType="com.yq.spbYq.domain.AIHealthAnalysisDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_health_analysis (
+            user_id,
+            record_id,
+            analysis_type,
+            risk_level,
+            health_score,
+            abnormal_indicators,
+            ai_suggestion,
+            disease_risk_prediction,
+            lifestyle_advice,
+            diet_advice,
+            exercise_advice,
+            medical_advice,
+            analysis_summary,
+            create_time,
+            update_time
+        ) values (
+            #{userId},
+            #{recordId},
+            #{analysisType},
+            #{riskLevel},
+            #{healthScore},
+            #{abnormalIndicators},
+            #{aiSuggestion},
+            #{diseaseRiskPrediction},
+            #{lifestyleAdvice},
+            #{dietAdvice},
+            #{exerciseAdvice},
+            #{medicalAdvice},
+            #{analysisSummary},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <select id="findByUserId" resultMap="AIHealthAnalysisMap">
+        <include refid="baseSql"/>
+        where user_id = #{userId}
+        order by create_time desc
+    </select>
+
+    <select id="findLatestByUserId" resultMap="AIHealthAnalysisMap">
+        <include refid="baseSql"/>
+        where user_id = #{userId}
+        order by create_time desc
+        limit 1
+    </select>
+
+    <select id="findById" resultMap="AIHealthAnalysisMap">
+        <include refid="baseSql"/>
+        where analysis_id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.yq.spbYq.domain.AIHealthAnalysisDomain">
+        update ai_health_analysis
+        <set>
+            <if test="riskLevel != null">risk_level = #{riskLevel},</if>
+            <if test="healthScore != null">health_score = #{healthScore},</if>
+            <if test="abnormalIndicators != null">abnormal_indicators = #{abnormalIndicators},</if>
+            <if test="aiSuggestion != null">ai_suggestion = #{aiSuggestion},</if>
+            <if test="diseaseRiskPrediction != null">disease_risk_prediction = #{diseaseRiskPrediction},</if>
+            <if test="lifestyleAdvice != null">lifestyle_advice = #{lifestyleAdvice},</if>
+            <if test="dietAdvice != null">diet_advice = #{dietAdvice},</if>
+            <if test="exerciseAdvice != null">exercise_advice = #{exerciseAdvice},</if>
+            <if test="medicalAdvice != null">medical_advice = #{medicalAdvice},</if>
+            <if test="analysisSummary != null">analysis_summary = #{analysisSummary},</if>
+            update_time = now()
+        </set>
+        where analysis_id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from ai_health_analysis
+        where analysis_id = #{id}
+    </delete>
+
+</mapper>

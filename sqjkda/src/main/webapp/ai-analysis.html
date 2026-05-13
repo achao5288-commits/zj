@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 健康分析 - 社区健康管理系统</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="css/style.min.css">
+    <style>
+        .analysis-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .health-score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .score-number {
+            font-size: 60px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .score-label {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        
+        .risk-low { background-color: #28a745; color: white; }
+        .risk-medium-low { background-color: #17a2b8; color: white; }
+        .risk-medium { background-color: #ffc107; color: #333; }
+        .risk-medium-high { background-color: #fd7e14; color: white; }
+        .risk-high { background-color: #dc3545; color: white; }
+        
+        .advice-section {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .advice-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .advice-title i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .advice-content {
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .indicator-tag {
+            display: inline-block;
+            background: #fee;
+            color: #c33;
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .result-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2">
+                <nav class="navbar navbar-dark bg-dark fixed-top">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidebar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="sidebar">
+                        <ul class="nav flex-column mt-5">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html">
+                                    <i class="mdi mdi-home"></i> 首页
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="hr.html">
+                                    <i class="mdi mdi-file-document-box"></i> 健康档案
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="ai-analysis.html">
+                                    <i class="mdi mdi-brain"></i> AI 健康分析
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="hrmind.html">
+                                    <i class="mdi mdi-bell"></i> 健康提醒
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="famdoc.html">
+                                    <i class="mdi mdi-doctor"></i> 家庭医生
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="pp.html">
+                                    <i class="mdi mdi-account"></i> 个人隐私
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="col-md-10 offset-md-2" style="padding: 30px;">
+                <h2 class="mb-4"><i class="mdi mdi-brain"></i> AI 健康智能分析</h2>
+                
+                <!-- 选择记录区域 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">选择要分析的健康记录</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select class="form-control" id="recordSelect">
+                                    <option value="">-- 请选择健康记录 --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn analyze-btn" onclick="startAnalysis()">
+                                    <i class="mdi mdi-play"></i> 开始 AI 分析
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 加载动画 -->
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="sr-only">正在分析...</span>
+                    </div>
+                    <p class="mt-3">AI 正在分析您的健康数据，请稍候...</p>
+                </div>
+
+                <!-- 分析结果展示 -->
+                <div class="result-container" id="resultContainer">
+                    <!-- 总体评估卡片 -->
+                    <div class="analysis-card">
+                        <div class="health-score-circle">
+                            <div>
+                                <div class="score-number" id="healthScore">--</div>
+                                <div class="score-label">健康评分</div>
+                            </div>
+                        </div>
+                        <h3 class="text-center" id="analysisSummary">分析摘要</h3>
+                        <div class="text-center">
+                            <div id="riskLevelBadge" class="risk-badge">--</div>
+                        </div>
+                    </div>
+
+                    <!-- AI 建议 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-lightbulb-on"></i>
+                            AI 智能建议
+                        </div>
+                        <div class="advice-content" id="aiSuggestion"></div>
+                    </div>
+
+                    <!-- 异常指标 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-alert-circle"></i>
+                            异常指标识别
+                        </div>
+                        <div class="advice-content" id="abnormalIndicators"></div>
+                    </div>
+
+                    <!-- 疾病风险预测 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-shield-alert"></i>
+                            疾病风险预测
+                        </div>
+                        <div class="advice-content" id="diseaseRiskPrediction"></div>
+                    </div>
+
+                    <!-- 生活方式建议 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-run-fast"></i>
+                            生活方式建议
+                        </div>
+                        <div class="advice-content" id="lifestyleAdvice"></div>
+                    </div>
+
+                    <!-- 饮食建议 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-silverware-fork-knife"></i>
+                            饮食建议
+                        </div>
+                        <div class="advice-content" id="dietAdvice"></div>
+                    </div>
+
+                    <!-- 运动建议 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-bike"></i>
+                            运动建议
+                        </div>
+                        <div class="advice-content" id="exerciseAdvice"></div>
+                    </div>
+
+                    <!-- 医疗建议 -->
+                    <div class="advice-section">
+                        <div class="advice-title">
+                            <i class="mdi mdi-medical-bag"></i>
+                            医疗建议
+                        </div>
+                        <div class="advice-content" id="medicalAdvice"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        // 从登录会话中获取用户 ID（如果没有登录，默认使用 32）
+        let currentUserId = parseInt(sessionStorage.getItem('userId') || localStorage.getItem('userId')) || 32;
+
+        // 页面加载时获取用户的健康记录
+        $(document).ready(function() {
+            loadHealthRecords();
+        });
+
+        // 加载健康记录
+        function loadHealthRecords() {
+            $.ajax({
+                url: 'http://localhost:8081/spbYq/healthRecords/list',
+                type: 'GET',
+                data: { userId: currentUserId },
+                success: function(response) {
+                    console.log('健康记录响应:', response);
+                    // ReturnVO 的 code=1 表示成功，data 可能在 content 字段
+                    if (response.code === 1 && response.content) {
+                        let options = '<option value="">-- 请选择健康记录 --</option>';
+                        response.content.forEach(record => {
+                            options += `<option value="${record.recordId}">${record.reportName} (${record.recordType}) - ${record.reportDate}</option>`;
+                        });
+                        $('#recordSelect').html(options);
+                    } else if (response.code === 200 && response.data) {
+                        // 兼容旧的判断方式
+                        let options = '<option value="">-- 请选择健康记录 --</option>';
+                        response.data.forEach(record => {
+                            options += `<option value="${record.recordId}">${record.reportName} (${record.recordType}) - ${record.reportDate}</option>`;
+                        });
+                        $('#recordSelect').html(options);
+                    } else {
+                        console.warn('未找到健康记录或返回数据格式不正确');
+                        console.log('Response:', response);
+                        alert('未找到健康记录，请先在健康档案中添加记录');
+                    }
+                },
+                error: function(err) {
+                    console.error('加载健康记录失败', err);
+                    alert('加载健康记录失败，请检查后端服务是否正常运行');
+                }
+            });
+        }
+
+        // 开始 AI 分析
+        function startAnalysis() {
+            const recordId = $('#recordSelect').val();
+            
+            if (!recordId) {
+                alert('请先选择一条健康记录！');
+                return;
+            }
+
+            // 显示加载动画
+            $('#loadingSpinner').show();
+            $('#resultContainer').hide();
+
+            // 调用 AI 分析 API
+            $.ajax({
+                url: `http://localhost:8081/spbYq/api/ai-analysis/analyze/${recordId}`,
+                type: 'POST',
+                data: { userId: currentUserId },
+                success: function(response) {
+                    $('#loadingSpinner').hide();
+                    console.log('AI 分析响应:', response);
+                    
+                    // ReturnVO 的 code=1 表示成功，数据在 content 字段
+                    if (response.code === 1 && response.content) {
+                        displayAnalysisResult(response.content);
+                    } else if (response.code === 200 && response.data) {
+                        // 兼容旧的判断方式
+                        displayAnalysisResult(response.data);
+                    } else {
+                        alert('分析失败：' + (response.msg || '未知错误'));
+                    }
+                },
+                error: function(err) {
+                    $('#loadingSpinner').hide();
+                    alert('分析请求失败，请稍后重试');
+                    console.error(err);
+                }
+            });
+        }
+
+        // 显示分析结果
+        function displayAnalysisResult(data) {
+            // 健康评分
+            $('#healthScore').text(data.healthScore ? data.healthScore.toFixed(1) : '--');
+            
+            // 分析摘要
+            $('#analysisSummary').text(data.analysisSummary || '暂无分析摘要');
+            
+            // 风险等级
+            const riskLevel = data.riskLevel || '未知';
+            const riskClass = getRiskClass(riskLevel);
+            $('#riskLevelBadge').text(riskLevel).attr('class', 'risk-badge ' + riskClass);
+            
+            // AI 建议
+            $('#aiSuggestion').html(formatContent(data.aiSuggestion));
+            
+            // 异常指标
+            $('#abnormalIndicators').html(formatIndicators(data.abnormalIndicators));
+            
+            // 疾病风险预测
+            $('#diseaseRiskPrediction').html(formatContent(data.diseaseRiskPrediction));
+            
+            // 生活方式建议
+            $('#lifestyleAdvice').html(formatContent(data.lifestyleAdvice));
+            
+            // 饮食建议
+            $('#dietAdvice').html(formatContent(data.dietAdvice));
+            
+            // 运动建议
+            $('#exerciseAdvice').html(formatContent(data.exerciseAdvice));
+            
+            // 医疗建议
+            $('#medicalAdvice').html(formatContent(data.medicalAdvice));
+            
+            // 显示结果容器
+            $('#resultContainer').fadeIn();
+            
+            // 滚动到结果区域
+            $('html, body').animate({
+                scrollTop: $('#resultContainer').offset().top - 20
+            }, 500);
+        }
+
+        // 获取风险等级对应的 CSS 类
+        function getRiskClass(riskLevel) {
+            const riskMap = {
+                '低风险': 'risk-low',
+                '中低风险': 'risk-medium-low',
+                '中等风险': 'risk-medium',
+                '中高风险': 'risk-medium-high',
+                '高风险': 'risk-high'
+            };
+            return riskMap[riskLevel] || 'risk-medium';
+        }
+
+        // 格式化普通文本内容
+        function formatContent(text) {
+            if (!text) return '暂无相关建议';
+            return text.replace(/\n/g, '<br>');
+        }
+
+        // 格式化指标标签
+        function formatIndicators(text) {
+            if (!text) return '<span class="indicator-tag">无明显异常</span>';
+            
+            const indicators = text.split(/[,;,,]/);
+            let html = '';
+            indicators.forEach(indicator => {
+                if (indicator.trim()) {
+                    html += `<span class="indicator-tag">${indicator.trim()}</span>`;
+                }
+            });
+            return html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI康联·全民健康档案云平台 - 主页</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c7a7b;
+            --secondary-color: #718096;
+            --success-color: #38a169;
+            --info-color: #319795;
+            --warning-color: #d69e2e;
+            --danger-color: #e53e3e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fc 0%, #e6f2f2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            padding: 0.5rem 0;
+        }
+
+        .module-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(44, 122, 123, 0.1);
+            transition: all 0.4s ease;
+            height: 100%;
+            border: 1px solid rgba(44, 122, 123, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .module-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .module-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .module-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 45px rgba(44, 122, 123, 0.15);
+        }
+
+        .module-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            transition: transform 0.4s ease;
+            display: inline-block;
+        }
+
+        .module-card:hover .module-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .module-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .module-description {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .main-content {
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .user-info {
+            padding: 0.85rem 1.75rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            margin-right: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: none;
+            box-shadow: 0 4px 15px rgba(44, 122, 123, 0.1);
+        }
+
+        .btn-primary, .btn-outline-primary {
+            padding: 0.85rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.4s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            box-shadow: 0 5px 15px rgba(44, 122, 123, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(44, 122, 123, 0.4);
+            background: var(--info-color);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(44, 122, 123, 0.4);
+            color: white;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 1.2s ease;
+            position: relative;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, rgba(44, 122, 123, 0.05) 0%, rgba(49, 151, 149, 0.05) 100%);
+            border-radius: 30px;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .module-row {
+            animation: fadeIn 1.2s ease;
+            position: relative;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .decorative-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .decorative-icons i {
+            position: absolute;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .wave-decoration {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(44, 122, 123, 0.05) 0%, rgba(49, 151, 149, 0.05) 100%);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+<!-- 装饰性波浪 -->
+<div class="wave-decoration"></div>
+
+<!-- 装饰性图标背景 -->
+<div class="decorative-icons">
+    <i class="bi bi-folder2-open" style="top: 15%; left: 10%;"></i>
+    <i class="bi bi-file-earmark-text" style="top: 45%; right: 15%;"></i>
+    <i class="bi bi-people" style="bottom: 20%; left: 20%;"></i>
+    <i class="bi bi-building" style="top: 30%; right: 25%;"></i>
+</div>
+
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-building me-2"></i>AI康联·全民健康档案云平台
+        </a>
+        <div class="d-flex align-items-center">
+            <div class="user-info" id="userInfo">
+                <i class="bi bi-person-circle me-2"></i>未登录
+            </div>
+            <button class="btn btn-outline-light" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-2"></i>退出登录
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主要内容 -->
+<div class="container main-content">
+    <!-- 欢迎区域 -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">欢迎使用AI康联·全民健康档案云平台</h1>
+        <p class="welcome-subtitle">基于AI的全民健康档案云平台</p>
+    </div>
+
+    <div class="row g-4 module-row">
+        <!-- AI 健康分析模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-cpu module-icon"></i>
+                <h3 class="module-title">AI 健康分析</h3>
+                <p class="module-description">基于人工智能技术的健康数据智能分析，提供个性化健康建议和疾病风险预测</p>
+                <a href="/spbYq/ai-analysis.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 档案管理模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-folder2-open module-icon"></i>
+                <h3 class="module-title">档案管理</h3>
+                <p class="module-description">管理和查看社区居民档案，包括基本信息、家庭情况等重要数据</p>
+                <a href="/spbYq/hr.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 档案提醒模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-bell module-icon"></i>
+                <h3 class="module-title">档案提醒</h3>
+                <p class="module-description">设置档案更新提醒、年度审核提醒等重要事项的定时提醒</p>
+                <a href="/spbYq/hrmind.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 社区工作者模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-people module-icon"></i>
+                <h3 class="module-title">社区工作者</h3>
+                <p class="module-description">管理社区工作者信息，分配工作任务，记录工作进度</p>
+                <a href="/spbYq/famdoc.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 用户反馈模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-chat-dots module-icon"></i>
+                <h3 class="module-title">用户反馈</h3>
+                <p class="module-description">收集用户意见和建议，持续改进服务质量，提供更好的体验</p>
+                <a href="/spbYq/uf.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 档案安全模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-shield-lock module-icon"></i>
+                <h3 class="module-title">档案安全</h3>
+                <p class="module-description">管理档案访问权限，确保信息安全，保护居民隐私</p>
+                <a href="/spbYq/pp.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 用户管理模块 - 仅root用户可见 -->
+        <div class="col-md-4" id="userManagementModule" style="display:none;">
+            <div class="module-card p-4">
+                <i class="bi bi-person-circle module-icon"></i>
+                <h3 class="module-title">用户管理</h3>
+                <p class="module-description">管理系统用户权限，维护用户信息，确保系统正常运行</p>
+                <a href="/spbYq/um.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 病人数据可视化模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-graph-up module-icon"></i>
+                <h3 class="module-title">数据可视化</h3>
+                <p class="module-description">通过图表和统计数据直观展示病人健康记录数据分析</p>
+                <a href="/spbYq/patient-dashboard.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+
+        <!-- 居家健康监测模块 -->
+        <div class="col-md-4">
+            <div class="module-card p-4">
+                <i class="bi bi-activity module-icon"></i>
+                <h3 class="module-title">居家健康监测</h3>
+                <p class="module-description">对接智能穿戴设备,实时监测生命体征,异常数据预警提醒</p>
+                <a href="/spbYq/health-monitoring.html" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-right-circle me-2"></i>进入模块
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 页面加载时检查登录状态
+    window.onload = function() {
+        $.ajax({
+            url: '',
+            success: function() {
+                var userInfoStr = localStorage.getItem('userInfo');
+                if (userInfoStr) {
+                    try {
+                        var user = JSON.parse(userInfoStr);
+                        document.getElementById('userInfo').innerHTML = `<i class="bi bi-person-circle me-2"></i>欢迎，${user.username}`;
+                        
+                        // 根据用户类型显示/隐藏用户管理模块
+                        // userType: 1=普通用户, 2=root用户
+                        if (user.userType == 2) {
+                            // root用户，显示用户管理模块
+                            var userMgmtModule = document.getElementById('userManagementModule');
+                            if (userMgmtModule) {
+                                userMgmtModule.style.display = '';
+                            }
+                        } else {
+                            // 普通用户，隐藏用户管理模块
+                            var userMgmtModule = document.getElementById('userManagementModule');
+                            if (userMgmtModule) {
+                                userMgmtModule.style.display = 'none';
+                            }
+                        }
+                    } catch (e) {
+                        localStorage.removeItem('userInfo');
+                        document.getElementById('userInfo').innerHTML = '<i class="bi bi-person-circle me-2"></i>未登录';
+                    }
+                } else {
+                    document.getElementById('userInfo').innerHTML = '<i class="bi bi-person-circle me-2"></i>未登录';
+                }
+            }
+        });
+    };
+
+    // 逢出登彄17
+    function logout() {
+        localStorage.removeItem('userInfo');
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.UserPrivacyProfilesMapper">
+
+    <resultMap type="com.yq.spbYq.domain.UserPrivacyProfilesEntity" id="UserPrivacyProfilesMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="profileVisibility" column="profile_visibility" jdbcType="VARCHAR"/>
+        <result property="healthDataVisible" column="health_data_visible" jdbcType="INTEGER"/>
+        <result property="contactInfoVisible" column="contact_info_visible" jdbcType="INTEGER"/>
+        <result property="searchIndexed" column="search_indexed" jdbcType="INTEGER"/>
+        <result property="twoFactorAuth" column="two_factor_auth" jdbcType="INTEGER"/>
+        <result property="lastPasswordChange" column="last_password_change" jdbcType="VARCHAR"/>
+        <result property="dataEncryptionLevel" column="data_encryption_level" jdbcType="VARCHAR"/>
+        <result property="autoLogoutMinutes" column="auto_logout_minutes" jdbcType="INTEGER"/>
+        <result property="shareApprovalRequired" column="share_approval_required" jdbcType="INTEGER"/>
+        <result property="defaultShareExpiryDays" column="default_share_expiry_days" jdbcType="INTEGER"/>
+        <result property="lastAccess" column="last_access" jdbcType="VARCHAR"/>
+        <result property="lastAccessIp" column="last_access_ip" jdbcType="VARCHAR"/>
+        <result property="failedLoginAttempts" column="failed_login_attempts" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select id,
+               user_id,
+               profile_visibility,
+               health_data_visible,
+               contact_info_visible,
+               search_indexed,
+               two_factor_auth,
+               last_password_change,
+               data_encryption_level,
+               auto_logout_minutes,
+               share_approval_required,
+               default_share_expiry_days,
+               last_access,
+               last_access_ip,
+               failed_login_attempts,
+               created_at,
+               updated_at
+        from user_privacy_profiles
+    </sql>
+    <sql id="condition">
+        <if test="userPrivacyProfiles.id != null">
+            and id = #{userPrivacyProfiles.id}
+        </if>
+        <if test="userPrivacyProfiles.userId != null">
+            and user_id = #{userPrivacyProfiles.userId}
+        </if>
+        <if test="userPrivacyProfiles.profileVisibility != null">
+            and profile_visibility = #{userPrivacyProfiles.profileVisibility}
+        </if>
+        <if test="userPrivacyProfiles.healthDataVisible != null">
+            and health_data_visible = #{userPrivacyProfiles.healthDataVisible}
+        </if>
+        <if test="userPrivacyProfiles.contactInfoVisible != null">
+            and contact_info_visible = #{userPrivacyProfiles.contactInfoVisible}
+        </if>
+        <if test="userPrivacyProfiles.searchIndexed != null">
+            and search_indexed = #{userPrivacyProfiles.searchIndexed}
+        </if>
+        <if test="userPrivacyProfiles.twoFactorAuth != null">
+            and two_factor_auth = #{userPrivacyProfiles.twoFactorAuth}
+        </if>
+        <if test="userPrivacyProfiles.lastPasswordChange != null and userPrivacyProfiles.lastPasswordChange != ''">
+            and last_password_change = #{userPrivacyProfiles.lastPasswordChange}
+        </if>
+        <if test="userPrivacyProfiles.dataEncryptionLevel != null">
+            and data_encryption_level = #{userPrivacyProfiles.dataEncryptionLevel}
+        </if>
+        <if test="userPrivacyProfiles.autoLogoutMinutes != null">
+            and auto_logout_minutes = #{userPrivacyProfiles.autoLogoutMinutes}
+        </if>
+        <if test="userPrivacyProfiles.shareApprovalRequired != null">
+            and share_approval_required = #{userPrivacyProfiles.shareApprovalRequired}
+        </if>
+        <if test="userPrivacyProfiles.defaultShareExpiryDays != null">
+            and default_share_expiry_days = #{userPrivacyProfiles.defaultShareExpiryDays}
+        </if>
+        <if test="userPrivacyProfiles.lastAccess != null and userPrivacyProfiles.lastAccess != ''">
+            and last_access = #{userPrivacyProfiles.lastAccess}
+        </if>
+        <if test="userPrivacyProfiles.lastAccessIp != null and userPrivacyProfiles.lastAccessIp != ''">
+            and last_access_ip = #{userPrivacyProfiles.lastAccessIp}
+        </if>
+        <if test="userPrivacyProfiles.failedLoginAttempts != null">
+            and failed_login_attempts = #{userPrivacyProfiles.failedLoginAttempts}
+        </if>
+        <if test="userPrivacyProfiles.createdAt != null and userPrivacyProfiles.createdAt != ''">
+            and created_at = #{userPrivacyProfiles.createdAt}
+        </if>
+        <if test="userPrivacyProfiles.updatedAt != null and userPrivacyProfiles.updatedAt != ''">
+            and updated_at = #{userPrivacyProfiles.updatedAt}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserPrivacyProfilesMap">
+        <include refid="baseSql"></include>
+        where id = #{id}
+    </select>
+
+    <!--鏌ヨ鎸囧畾琛屾暟鎹�-->
+    <select id="queryAllByLimit" resultMap="UserPrivacyProfilesMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--缁熻鎬昏鏁�-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from user_privacy_profiles
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="profileVisibility != null">
+                and profile_visibility = #{profileVisibility}
+            </if>
+            <if test="healthDataVisible != null">
+                and health_data_visible = #{healthDataVisible}
+            </if>
+            <if test="contactInfoVisible != null">
+                and contact_info_visible = #{contactInfoVisible}
+            </if>
+            <if test="searchIndexed != null">
+                and search_indexed = #{searchIndexed}
+            </if>
+            <if test="twoFactorAuth != null">
+                and two_factor_auth = #{twoFactorAuth}
+            </if>
+            <if test="lastPasswordChange != null and lastPasswordChange != ''">
+                and last_password_change = #{lastPasswordChange}
+            </if>
+            <if test="dataEncryptionLevel != null">
+                and data_encryption_level = #{dataEncryptionLevel}
+            </if>
+            <if test="autoLogoutMinutes != null">
+                and auto_logout_minutes = #{autoLogoutMinutes}
+            </if>
+            <if test="shareApprovalRequired != null">
+                and share_approval_required = #{shareApprovalRequired}
+            </if>
+            <if test="defaultShareExpiryDays != null">
+                and default_share_expiry_days = #{defaultShareExpiryDays}
+            </if>
+            <if test="lastAccess != null and lastAccess != ''">
+                and last_access = #{lastAccess}
+            </if>
+            <if test="lastAccessIp != null and lastAccessIp != ''">
+                and last_access_ip = #{lastAccessIp}
+            </if>
+            <if test="failedLoginAttempts != null">
+                and failed_login_attempts = #{failedLoginAttempts}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                and updated_at = #{updatedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--鏂板鎵€鏈夊垪-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into user_privacy_profiles(user_id, profile_visibility, health_data_visible, contact_info_visible,
+                                          search_indexed, two_factor_auth, last_password_change, data_encryption_level,
+                                          auto_logout_minutes, share_approval_required, default_share_expiry_days,
+                                          last_access, last_access_ip, failed_login_attempts, created_at, updated_at)
+        values (#{userId}, #{profileVisibility}, #{healthDataVisible}, #{contactInfoVisible}, #{searchIndexed},
+                #{twoFactorAuth}, #{lastPasswordChange}, #{dataEncryptionLevel}, #{autoLogoutMinutes},
+                #{shareApprovalRequired}, #{defaultShareExpiryDays}, #{lastAccess}, #{lastAccessIp},
+                #{failedLoginAttempts}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user_privacy_profiles(user_id, profile_visibility, health_data_visible, contact_info_visible,
+        search_indexed, two_factor_auth, last_password_change, data_encryption_level, auto_logout_minutes,
+        share_approval_required, default_share_expiry_days, last_access, last_access_ip, failed_login_attempts,
+        created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.profileVisibility}, #{entity.healthDataVisible}, #{entity.contactInfoVisible},
+            #{entity.searchIndexed}, #{entity.twoFactorAuth}, #{entity.lastPasswordChange},
+            #{entity.dataEncryptionLevel}, #{entity.autoLogoutMinutes}, #{entity.shareApprovalRequired},
+            #{entity.defaultShareExpiryDays}, #{entity.lastAccess}, #{entity.lastAccessIp},
+            #{entity.failedLoginAttempts}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user_privacy_profiles(user_id, profile_visibility, health_data_visible, contact_info_visible,
+        search_indexed, two_factor_auth, last_password_change, data_encryption_level, auto_logout_minutes,
+        share_approval_required, default_share_expiry_days, last_access, last_access_ip, failed_login_attempts,
+        created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.profileVisibility}, #{entity.healthDataVisible}, #{entity.contactInfoVisible},
+            #{entity.searchIndexed}, #{entity.twoFactorAuth}, #{entity.lastPasswordChange},
+            #{entity.dataEncryptionLevel}, #{entity.autoLogoutMinutes}, #{entity.shareApprovalRequired},
+            #{entity.defaultShareExpiryDays}, #{entity.lastAccess}, #{entity.lastAccessIp},
+            #{entity.failedLoginAttempts}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        profile_visibility = values(profile_visibility),
+        health_data_visible = values(health_data_visible),
+        contact_info_visible = values(contact_info_visible),
+        search_indexed = values(search_indexed),
+        two_factor_auth = values(two_factor_auth),
+        last_password_change = values(last_password_change),
+        data_encryption_level = values(data_encryption_level),
+        auto_logout_minutes = values(auto_logout_minutes),
+        share_approval_required = values(share_approval_required),
+        default_share_expiry_days = values(default_share_expiry_days),
+        last_access = values(last_access),
+        last_access_ip = values(last_access_ip),
+        failed_login_attempts = values(failed_login_attempts),
+        created_at = values(created_at),
+        updated_at = values(updated_at)
+    </insert>
+
+    <!--閫氳繃涓婚敭淇敼鏁版嵁-->
+    <update id="update">
+        update user_privacy_profiles
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="profileVisibility != null">
+                profile_visibility = #{profileVisibility},
+            </if>
+            <if test="healthDataVisible != null">
+                health_data_visible = #{healthDataVisible},
+            </if>
+            <if test="contactInfoVisible != null">
+                contact_info_visible = #{contactInfoVisible},
+            </if>
+            <if test="searchIndexed != null">
+                search_indexed = #{searchIndexed},
+            </if>
+            <if test="twoFactorAuth != null">
+                two_factor_auth = #{twoFactorAuth},
+            </if>
+            <if test="lastPasswordChange != null and lastPasswordChange != ''">
+                last_password_change = #{lastPasswordChange},
+            </if>
+            <if test="dataEncryptionLevel != null">
+                data_encryption_level = #{dataEncryptionLevel},
+            </if>
+            <if test="autoLogoutMinutes != null">
+                auto_logout_minutes = #{autoLogoutMinutes},
+            </if>
+            <if test="shareApprovalRequired != null">
+                share_approval_required = #{shareApprovalRequired},
+            </if>
+            <if test="defaultShareExpiryDays != null">
+                default_share_expiry_days = #{defaultShareExpiryDays},
+            </if>
+            <if test="lastAccess != null and lastAccess != ''">
+                last_access = #{lastAccess},
+            </if>
+            <if test="lastAccessIp != null and lastAccessIp != ''">
+                last_access_ip = #{lastAccessIp},
+            </if>
+            <if test="failedLoginAttempts != null">
+                failed_login_attempts = #{failedLoginAttempts},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--閫氳繃涓婚敭鍒犻櫎-->
+    <delete id="deleteById">
+        delete from user_privacy_profiles
+        where id = #{id}
+    </delete>
+
+</mapper>
+

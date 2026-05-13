@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthAlertMapper">
+
+    <resultMap id="BaseResultMap" type="com.yq.spbYq.domain.HealthAlertDomain">
+        <id column="alert_id" property="alertId"/>
+        <result column="user_id" property="userId"/>
+        <result column="monitor_id" property="monitorId"/>
+        <result column="alert_type" property="alertType"/>
+        <result column="alert_level" property="alertLevel"/>
+        <result column="alert_title" property="alertTitle"/>
+        <result column="alert_content" property="alertContent"/>
+        <result column="data_type" property="dataType"/>
+        <result column="data_value" property="dataValue"/>
+        <result column="normal_range" property="normalRange"/>
+        <result column="is_read" property="isRead"/>
+        <result column="is_handled" property="isHandled"/>
+        <result column="handle_result" property="handleResult"/>
+        <result column="notify_user" property="notifyUser"/>
+        <result column="notify_doctor" property="notifyDoctor"/>
+        <result column="notify_time" property="notifyTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="handle_time" property="handleTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.yq.spbYq.domain.HealthAlertDomain" useGeneratedKeys="true" keyProperty="alertId">
+        INSERT INTO health_alerts (user_id, monitor_id, alert_type, alert_level, alert_title, alert_content,
+                                  data_type, data_value, normal_range, notify_user, notify_doctor)
+        VALUES (#{userId}, #{monitorId}, #{alertType}, #{alertLevel}, #{alertTitle}, #{alertContent},
+                #{dataType}, #{dataValue}, #{normalRange}, #{notifyUser}, #{notifyDoctor})
+    </insert>
+
+    <update id="update" parameterType="com.yq.spbYq.domain.HealthAlertDomain">
+        UPDATE health_alerts
+        <set>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="isHandled != null">is_handled = #{isHandled},</if>
+            <if test="handleResult != null">handle_result = #{handleResult},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+        </set>
+        WHERE alert_id = #{alertId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM health_alerts WHERE alert_id = #{alertId}
+    </delete>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT * FROM health_alerts WHERE alert_id = #{alertId}
+    </select>
+
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        SELECT * FROM health_alerts WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="queryUnreadByUserId" resultMap="BaseResultMap">
+        SELECT * FROM health_alerts WHERE user_id = #{userId} AND is_read = 0 ORDER BY create_time DESC
+    </select>
+
+    <select id="queryByPage" resultMap="BaseResultMap">
+        SELECT * FROM health_alerts
+        <where>
+            <if test="alert.userId != null">AND user_id = #{alert.userId}</if>
+            <if test="alert.alertLevel != null and alert.alertLevel != ''">AND alert_level = #{alert.alertLevel}</if>
+            <if test="alert.isRead != null">AND is_read = #{alert.isRead}</if>
+            <if test="alert.isHandled != null">AND is_handled = #{alert.isHandled}</if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByPage" resultType="int">
+        SELECT COUNT(*) FROM health_alerts
+        <where>
+            <if test="alert.userId != null">AND user_id = #{alert.userId}</if>
+            <if test="alert.alertLevel != null and alert.alertLevel != ''">AND alert_level = #{alert.alertLevel}</if>
+            <if test="alert.isRead != null">AND is_read = #{alert.isRead}</if>
+            <if test="alert.isHandled != null">AND is_handled = #{alert.isHandled}</if>
+        </where>
+    </select>
+
+    <select id="countUnreadByUserId" resultType="int">
+        SELECT COUNT(*) FROM health_alerts WHERE user_id = #{userId} AND is_read = 0
+    </select>
+
+</mapper>

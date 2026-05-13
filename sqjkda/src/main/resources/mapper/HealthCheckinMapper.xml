@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthCheckinMapper">
+
+    <resultMap id="BaseResultMap" type="com.yq.spbYq.domain.HealthCheckinDomain">
+        <id column="checkin_id" property="checkinId"/>
+        <result column="user_id" property="userId"/>
+        <result column="checkin_date" property="checkinDate"/>
+        <result column="checkin_time" property="checkinTime"/>
+        <result column="overall_feeling" property="overallFeeling"/>
+        <result column="sleep_quality" property="sleepQuality"/>
+        <result column="sleep_hours" property="sleepHours"/>
+        <result column="mood_status" property="moodStatus"/>
+        <result column="exercise_status" property="exerciseStatus"/>
+        <result column="exercise_minutes" property="exerciseMinutes"/>
+        <result column="diet_status" property="dietStatus"/>
+        <result column="water_intake" property="waterIntake"/>
+        <result column="temperature" property="temperature"/>
+        <result column="weight" property="weight"/>
+        <result column="blood_pressure" property="bloodPressure"/>
+        <result column="heart_rate" property="heartRate"/>
+        <result column="symptoms" property="symptoms"/>
+        <result column="medication_status" property="medicationStatus"/>
+        <result column="notes" property="notes"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.yq.spbYq.domain.HealthCheckinDomain" useGeneratedKeys="true" keyProperty="checkinId">
+        INSERT INTO health_checkin (user_id, checkin_date, overall_feeling, sleep_quality, sleep_hours,
+                                   mood_status, exercise_status, exercise_minutes, diet_status, water_intake,
+                                   temperature, weight, blood_pressure, heart_rate, symptoms, medication_status, notes)
+        VALUES (#{userId}, #{checkinDate}, #{overallFeeling}, #{sleepQuality}, #{sleepHours},
+                #{moodStatus}, #{exerciseStatus}, #{exerciseMinutes}, #{dietStatus}, #{waterIntake},
+                #{temperature}, #{weight}, #{bloodPressure}, #{heartRate}, #{symptoms}, #{medicationStatus}, #{notes})
+    </insert>
+
+    <update id="update" parameterType="com.yq.spbYq.domain.HealthCheckinDomain">
+        UPDATE health_checkin
+        <set>
+            <if test="overallFeeling != null">overall_feeling = #{overallFeeling},</if>
+            <if test="sleepQuality != null">sleep_quality = #{sleepQuality},</if>
+            <if test="sleepHours != null">sleep_hours = #{sleepHours},</if>
+            <if test="moodStatus != null">mood_status = #{moodStatus},</if>
+            <if test="exerciseStatus != null">exercise_status = #{exerciseStatus},</if>
+            <if test="exerciseMinutes != null">exercise_minutes = #{exerciseMinutes},</if>
+            <if test="dietStatus != null">diet_status = #{dietStatus},</if>
+            <if test="waterIntake != null">water_intake = #{waterIntake},</if>
+            <if test="temperature != null">temperature = #{temperature},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="bloodPressure != null">blood_pressure = #{bloodPressure},</if>
+            <if test="heartRate != null">heart_rate = #{heartRate},</if>
+            <if test="symptoms != null">symptoms = #{symptoms},</if>
+            <if test="medicationStatus != null">medication_status = #{medicationStatus},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </set>
+        WHERE checkin_id = #{checkinId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM health_checkin WHERE checkin_id = #{checkinId}
+    </delete>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT * FROM health_checkin WHERE checkin_id = #{checkinId}
+    </select>
+
+    <select id="queryByUserIdAndDate" resultMap="BaseResultMap">
+        SELECT * FROM health_checkin WHERE user_id = #{userId} AND checkin_date = #{checkinDate}
+    </select>
+
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        SELECT * FROM health_checkin WHERE user_id = #{userId} ORDER BY checkin_date DESC
+    </select>
+
+    <select id="queryByPage" resultMap="BaseResultMap">
+        SELECT * FROM health_checkin
+        <where>
+            <if test="checkin.userId != null">AND user_id = #{checkin.userId}</if>
+            <if test="checkin.checkinDate != null and checkin.checkinDate != ''">AND checkin_date = #{checkin.checkinDate}</if>
+        </where>
+        ORDER BY checkin_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByPage" resultType="int">
+        SELECT COUNT(*) FROM health_checkin
+        <where>
+            <if test="checkin.userId != null">AND user_id = #{checkin.userId}</if>
+            <if test="checkin.checkinDate != null and checkin.checkinDate != ''">AND checkin_date = #{checkin.checkinDate}</if>
+        </where>
+    </select>
+
+</mapper>

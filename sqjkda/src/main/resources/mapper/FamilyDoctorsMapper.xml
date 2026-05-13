@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.FamilyDoctorsMapper">
+
+    <resultMap type="com.yq.spbYq.domain.FamilyDoctorsEntity" id="FamilyDoctorsMap">
+        <result property="id" column="doctor_id" jdbcType="INTEGER"/>
+        <result property="doctorId" column="doctor_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="specialty" column="specialty" jdbcType="VARCHAR"/>
+        <result property="isAvailable" column="is_available" jdbcType="INTEGER"/>
+        <result property="averageRating" column="average_rating" jdbcType="NUMERIC"/>
+        <result property="totalPatients" column="total_patients" jdbcType="INTEGER"/>
+        <result property="completedAppointments" column="completed_appointments" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
+        <result property="licenseNumber" column="license_number" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select doctor_id,
+               user_id,
+               specialty,
+               is_available,
+               average_rating,
+               total_patients,
+               completed_appointments,
+               created_at,
+               updated_at,
+               license_number
+        from family_doctors
+    </sql>
+    <sql id="condition">
+        <if test="familyDoctors.id != null">
+            and doctor_id = #{familyDoctors.id}
+        </if>
+        <if test="familyDoctors.doctorId != null">
+            and doctor_id = #{familyDoctors.doctorId}
+        </if>
+        <if test="familyDoctors.userId != null">
+            and user_id = #{familyDoctors.userId}
+        </if>
+        <if test="familyDoctors.specialty != null and familyDoctors.specialty != ''">
+            and specialty = #{familyDoctors.specialty}
+        </if>
+        <if test="familyDoctors.isAvailable != null">
+            and is_available = #{familyDoctors.isAvailable}
+        </if>
+        <if test="familyDoctors.averageRating != null">
+            and average_rating = #{familyDoctors.averageRating}
+        </if>
+        <if test="familyDoctors.totalPatients != null">
+            and total_patients = #{familyDoctors.totalPatients}
+        </if>
+        <if test="familyDoctors.completedAppointments != null">
+            and completed_appointments = #{familyDoctors.completedAppointments}
+        </if>
+        <if test="familyDoctors.createdAt != null and familyDoctors.createdAt != ''">
+            and created_at = #{familyDoctors.createdAt}
+        </if>
+        <if test="familyDoctors.updatedAt != null and familyDoctors.updatedAt != ''">
+            and updated_at = #{familyDoctors.updatedAt}
+        </if>
+        <if test="familyDoctors.licenseNumber != null and familyDoctors.licenseNumber != ''">
+            and license_number = #{familyDoctors.licenseNumber}
+        </if>
+    </sql>
+
+    <!--查询单个-->    <select id="queryById" resultMap="FamilyDoctorsMap">
+        <include refid="baseSql"></include>
+        <where>
+            doctor_id = #{id}
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="FamilyDoctorsMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from family_doctors
+        <where>
+            <if test="id != null">
+                and doctor_id = #{id}
+            </if>
+            <if test="doctorId != null">
+                and doctor_id = #{doctorId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="specialty != null and specialty != ''">
+                and specialty = #{specialty}
+            </if>
+            <if test="isAvailable != null">
+                and is_available = #{isAvailable}
+            </if>
+            <if test="averageRating != null">
+                and average_rating = #{averageRating}
+            </if>
+            <if test="totalPatients != null">
+                and total_patients = #{totalPatients}
+            </if>
+            <if test="completedAppointments != null">
+                and completed_appointments = #{completedAppointments}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="licenseNumber != null and licenseNumber != ''">
+                and license_number = #{licenseNumber}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="doctorId" useGeneratedKeys="true">
+        insert into family_doctors(user_id, specialty, is_available, average_rating, total_patients,
+                                   completed_appointments, created_at, updated_at, license_number)
+        values (#{userId}, #{specialty}, #{isAvailable}, #{averageRating}, #{totalPatients}, #{completedAppointments},
+                #{createdAt}, #{updatedAt}, #{licenseNumber})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="doctorId" useGeneratedKeys="true">
+        insert into family_doctors(user_id, specialty, is_available, average_rating, total_patients,
+        completed_appointments, created_at, updated_at, license_number)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.specialty}, #{entity.isAvailable}, #{entity.averageRating},
+            #{entity.totalPatients}, #{entity.completedAppointments}, #{entity.createdAt}, #{entity.updatedAt},
+            #{entity.licenseNumber})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="doctorId" useGeneratedKeys="true">
+        insert into family_doctors(user_id, specialty, is_available, average_rating, total_patients,
+        completed_appointments, created_at, updated_at, license_number)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.specialty}, #{entity.isAvailable}, #{entity.averageRating},
+            #{entity.totalPatients}, #{entity.completedAppointments}, #{entity.createdAt}, #{entity.updatedAt},
+            #{entity.licenseNumber})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        specialty = values(specialty),
+        is_available = values(is_available),
+        average_rating = values(average_rating),
+        total_patients = values(total_patients),
+        completed_appointments = values(completed_appointments),
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        license_number = values(license_number)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update family_doctors
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="specialty != null and specialty != ''">
+                specialty = #{specialty},
+            </if>
+            <if test="isAvailable != null">
+                is_available = #{isAvailable},
+            </if>
+            <if test="averageRating != null">
+                average_rating = #{averageRating},
+            </if>
+            <if test="totalPatients != null">
+                total_patients = #{totalPatients},
+            </if>
+            <if test="completedAppointments != null">
+                completed_appointments = #{completedAppointments},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at = #{updatedAt},
+            </if>
+            <if test="licenseNumber != null and licenseNumber != ''">
+                license_number = #{licenseNumber},
+            </if>
+        </set>
+        where doctor_id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from family_doctors
+        where doctor_id = #{id}
+    </delete>
+
+</mapper>
+

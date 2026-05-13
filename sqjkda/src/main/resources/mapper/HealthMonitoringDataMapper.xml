@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.HealthMonitoringDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.yq.spbYq.domain.HealthMonitoringDataDomain">
+        <id column="monitor_id" property="monitorId"/>
+        <result column="user_id" property="userId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="data_type" property="dataType"/>
+        <result column="data_value" property="dataValue"/>
+        <result column="data_unit" property="dataUnit"/>
+        <result column="systolic" property="systolic"/>
+        <result column="diastolic" property="diastolic"/>
+        <result column="measurement_time" property="measurementTime"/>
+        <result column="is_abnormal" property="isAbnormal"/>
+        <result column="abnormal_level" property="abnormalLevel"/>
+        <result column="notes" property="notes"/>
+        <result column="sync_status" property="syncStatus"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.yq.spbYq.domain.HealthMonitoringDataDomain" useGeneratedKeys="true" keyProperty="monitorId">
+        INSERT INTO health_monitoring_data (user_id, device_id, data_type, data_value, data_unit,
+                                           systolic, diastolic, measurement_time, is_abnormal, abnormal_level, notes)
+        VALUES (#{userId}, #{deviceId}, #{dataType}, #{dataValue}, #{dataUnit},
+                #{systolic}, #{diastolic}, #{measurementTime}, #{isAbnormal}, #{abnormalLevel}, #{notes})
+    </insert>
+
+    <update id="update" parameterType="com.yq.spbYq.domain.HealthMonitoringDataDomain">
+        UPDATE health_monitoring_data
+        <set>
+            <if test="dataValue != null">data_value = #{dataValue},</if>
+            <if test="systolic != null">systolic = #{systolic},</if>
+            <if test="diastolic != null">diastolic = #{diastolic},</if>
+            <if test="isAbnormal != null">is_abnormal = #{isAbnormal},</if>
+            <if test="abnormalLevel != null">abnormal_level = #{abnormalLevel},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </set>
+        WHERE monitor_id = #{monitorId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM health_monitoring_data WHERE monitor_id = #{monitorId}
+    </delete>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT * FROM health_monitoring_data WHERE monitor_id = #{monitorId}
+    </select>
+
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        SELECT * FROM health_monitoring_data WHERE user_id = #{userId} ORDER BY measurement_time DESC
+    </select>
+
+    <select id="queryByPage" resultMap="BaseResultMap">
+        SELECT * FROM health_monitoring_data
+        <where>
+            <if test="data.userId != null">AND user_id = #{data.userId}</if>
+            <if test="data.deviceId != null">AND device_id = #{data.deviceId}</if>
+            <if test="data.dataType != null and data.dataType != ''">AND data_type = #{data.dataType}</if>
+            <if test="data.isAbnormal != null">AND is_abnormal = #{data.isAbnormal}</if>
+        </where>
+        ORDER BY measurement_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByPage" resultType="int">
+        SELECT COUNT(*) FROM health_monitoring_data
+        <where>
+            <if test="data.userId != null">AND user_id = #{data.userId}</if>
+            <if test="data.deviceId != null">AND device_id = #{data.deviceId}</if>
+            <if test="data.dataType != null and data.dataType != ''">AND data_type = #{data.dataType}</if>
+            <if test="data.isAbnormal != null">AND is_abnormal = #{data.isAbnormal}</if>
+        </where>
+    </select>
+
+    <select id="getStatisticsByType" resultType="map">
+        SELECT data_type AS dataType, COUNT(*) AS count, AVG(data_value) AS avgValue
+        FROM health_monitoring_data
+        WHERE user_id = #{userId}
+        GROUP BY data_type
+    </select>
+
+    <select id="getStatisticsByDate" resultType="map">
+        SELECT DATE(measurement_time) AS date, data_type AS dataType, 
+               AVG(data_value) AS avgValue, COUNT(*) AS count
+        FROM health_monitoring_data
+        WHERE user_id = #{userId} 
+          AND measurement_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+        GROUP BY DATE(measurement_time), data_type
+        ORDER BY date DESC
+    </select>
+
+</mapper>

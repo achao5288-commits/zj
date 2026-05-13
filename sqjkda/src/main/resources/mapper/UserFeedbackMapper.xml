@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.UserFeedbackMapper">
+
+    <resultMap type="com.yq.spbYq.domain.UserFeedbackEntity" id="UserFeedbackMap">
+        <result property="id" column="feedback_id" jdbcType="INTEGER"/>
+        <result property="feedbackId" column="feedback_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="feedbackType" column="feedback_type" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="adminNotes" column="admin_notes" jdbcType="VARCHAR"/>
+        <result property="response" column="response" jdbcType="VARCHAR"/>
+        <result property="ipAddress" column="ip_address" jdbcType="VARCHAR"/>
+        <result property="deviceInfo" column="device_info" jdbcType="VARCHAR"/>
+        <result property="appVersion" column="app_version" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select feedback_id,
+               user_id,
+               feedback_type,
+               title,
+               content,
+               status,
+               admin_notes,
+               response,
+               ip_address,
+               device_info,
+               app_version,
+               created_at,
+               updated_at
+        from user_feedback
+    </sql>
+    <sql id="condition">
+        <if test="userFeedback.id != null">
+            and feedback_id = #{userFeedback.id}
+        </if>
+        <if test="userFeedback.feedbackId != null">
+            and feedback_id = #{userFeedback.feedbackId}
+        </if>
+        <if test="userFeedback.userId != null">
+            and user_id = #{userFeedback.userId}
+        </if>
+        <if test="userFeedback.feedbackType != null">
+            and feedback_type = #{userFeedback.feedbackType}
+        </if>
+        <if test="userFeedback.title != null and userFeedback.title != ''">
+            and title = #{userFeedback.title}
+        </if>
+        <if test="userFeedback.content != null and userFeedback.content != ''">
+            and content = #{userFeedback.content}
+        </if>
+        <if test="userFeedback.status != null">
+            and status = #{userFeedback.status}
+        </if>
+        <if test="userFeedback.adminNotes != null and userFeedback.adminNotes != ''">
+            and admin_notes = #{userFeedback.adminNotes}
+        </if>
+        <if test="userFeedback.response != null and userFeedback.response != ''">
+            and response = #{userFeedback.response}
+        </if>
+        <if test="userFeedback.ipAddress != null and userFeedback.ipAddress != ''">
+            and ip_address = #{userFeedback.ipAddress}
+        </if>
+        <if test="userFeedback.deviceInfo != null and userFeedback.deviceInfo != ''">
+            and device_info = #{userFeedback.deviceInfo}
+        </if>
+        <if test="userFeedback.appVersion != null and userFeedback.appVersion != ''">
+            and app_version = #{userFeedback.appVersion}
+        </if>
+        <if test="userFeedback.createdAt != null and userFeedback.createdAt != ''">
+            and created_at = #{userFeedback.createdAt}
+        </if>
+        <if test="userFeedback.updatedAt != null and userFeedback.updatedAt != ''">
+            and updated_at = #{userFeedback.updatedAt}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserFeedbackMap">
+        <include refid="baseSql"></include>
+        <where>
+            feedback_id = #{id}
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserFeedbackMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from user_feedback
+        <where>
+            <if test="id != null">
+                and feedback_id = #{id}
+            </if>
+            <if test="feedbackId != null">
+                and feedback_id = #{feedbackId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="feedbackType != null">
+                and feedback_type = #{feedbackType}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="adminNotes != null and adminNotes != ''">
+                and admin_notes = #{adminNotes}
+            </if>
+            <if test="response != null and response != ''">
+                and response = #{response}
+            </if>
+            <if test="ipAddress != null and ipAddress != ''">
+                and ip_address = #{ipAddress}
+            </if>
+            <if test="deviceInfo != null and deviceInfo != ''">
+                and device_info = #{deviceInfo}
+            </if>
+            <if test="appVersion != null and appVersion != ''">
+                and app_version = #{appVersion}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                and updated_at = #{updatedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="feedbackId" useGeneratedKeys="true">
+        insert into user_feedback(user_id, feedback_type, title, content, status, admin_notes, response, ip_address,
+                                  device_info, app_version, created_at, updated_at)
+        values (#{userId}, #{feedbackType}, #{title}, #{content}, #{status}, #{adminNotes}, #{response}, #{ipAddress},
+                #{deviceInfo}, #{appVersion}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="feedbackId" useGeneratedKeys="true">
+        insert into user_feedback(user_id, feedback_type, title, content, status, admin_notes, response, ip_address,
+        device_info, app_version, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.feedbackType}, #{entity.title}, #{entity.content}, #{entity.status},
+            #{entity.adminNotes}, #{entity.response}, #{entity.ipAddress}, #{entity.deviceInfo}, #{entity.appVersion},
+            #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="feedbackId" useGeneratedKeys="true">
+        insert into user_feedback(user_id, feedback_type, title, content, status, admin_notes, response, ip_address,
+        device_info, app_version, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.feedbackType}, #{entity.title}, #{entity.content}, #{entity.status},
+            #{entity.adminNotes}, #{entity.response}, #{entity.ipAddress}, #{entity.deviceInfo}, #{entity.appVersion},
+            #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        feedback_type = values(feedback_type),
+        title = values(title),
+        content = values(content),
+        status = values(status),
+        admin_notes = values(admin_notes),
+        response = values(response),
+        ip_address = values(ip_address),
+        device_info = values(device_info),
+        app_version = values(app_version),
+        created_at = values(created_at),
+        updated_at = values(updated_at)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update user_feedback
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="feedbackType != null">
+                feedback_type = #{feedbackType},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="adminNotes != null and adminNotes != ''">
+                admin_notes = #{adminNotes},
+            </if>
+            <if test="response != null and response != ''">
+                response = #{response},
+            </if>
+            <if test="ipAddress != null and ipAddress != ''">
+                ip_address = #{ipAddress},
+            </if>
+            <if test="deviceInfo != null and deviceInfo != ''">
+                device_info = #{deviceInfo},
+            </if>
+            <if test="appVersion != null and appVersion != ''">
+                app_version = #{appVersion},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where feedback_id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from user_feedback
+        where feedback_id = #{id}
+    </delete>
+
+</mapper>
+

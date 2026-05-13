@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yq.spbYq.mapper.UsersMapper">
+
+    <resultMap type="com.yq.spbYq.domain.UsersEntity" id="UsersMap">
+        <result property="id" column="user_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="passwordHash" column="password_hash" jdbcType="VARCHAR"/>
+        <result property="userType" column="user_type" jdbcType="INTEGER"/>
+        <result property="userInfo" column="user_info" jdbcType="VARCHAR"/>
+        <result property="userProfile" column="user_profile" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="VARCHAR"/>
+        <result property="updatedAt" column="updated_at" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select user_id,
+               username,
+               phone_number,
+               password_hash,
+               user_type,
+               user_info,
+               user_profile,
+               created_at,
+               updated_at
+        from users
+    </sql>
+    <sql id="condition">
+        <if test="users.id != null">
+            and user_id = #{users.id}
+        </if>
+        <if test="users.userId != null">
+            and user_id = #{users.userId}
+        </if>
+        <if test="users.phoneNumber != null and users.phoneNumber != ''">
+            and phone_number = #{users.phoneNumber}
+        </if>
+        <if test="users.passwordHash != null and users.passwordHash != ''">
+            and password_hash = #{users.passwordHash}
+        </if>
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UsersMap">
+        <include refid="baseSql"/>
+        <where>
+            user_id = #{id}
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UsersMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from users
+        <where>
+            <if test="id != null">
+                and user_id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                and password_hash = #{passwordHash}
+            </if>
+            <if test="userType != null">
+                and user_type = #{userType}
+            </if>
+            <if test="userInfo != null and userInfo != ''">
+                and user_info = #{userInfo}
+            </if>
+            <if test="userProfile != null and userProfile != ''">
+                and user_profile = #{userProfile}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                and updated_at = #{updatedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(username, phone_number, password_hash, user_type, user_info, user_profile)
+        values (#{username}, #{phoneNumber}, #{passwordHash}, #{userType}, #{userInfo}, #{userProfile})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(username, phone_number, password_hash, user_type, user_info, user_profile, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.phoneNumber}, #{entity.passwordHash}, #{entity.userType}, #{entity.userInfo},
+            #{entity.userProfile}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(username, phone_number, password_hash, user_type, user_info, user_profile, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.phoneNumber}, #{entity.passwordHash}, #{entity.userType}, #{entity.userInfo},
+            #{entity.userProfile}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+        on duplicate key update
+        username = values(username),
+        phone_number = values(phone_number),
+        password_hash = values(password_hash),
+        user_type = values(user_type),
+        user_info = values(user_info),
+        user_profile = values(user_profile),
+        created_at = values(created_at),
+        updated_at = values(updated_at)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update users
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                password_hash = #{passwordHash},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType},
+            </if>
+            <if test="userInfo != null and userInfo != ''">
+                user_info = #{userInfo},
+            </if>
+            <if test="userProfile != null and userProfile != ''">
+                user_profile = #{userProfile},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where user_id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from users
+        where user_id = #{id}
+    </delete>
+
+    <select id="queryOneForLogin" resultMap="UsersMap">
+        <include refid="baseSql"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit 1
+    </select>
+
+</mapper>
+
