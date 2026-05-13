@@ -1,0 +1,141 @@
+/* ===== 主页布局 ===== */
+.main-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #FFF8F2;
+}
+
+/* 左侧导航 */
+.sidebar {
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  background: linear-gradient(180deg, #3D1C00, #5C2A00);
+  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.sidebar-top {
+  margin-bottom: 24px;
+}
+
+.self-avatar {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 0 8px;
+}
+
+.nav-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,0.5);
+  font-size: 20px;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.85);
+}
+
+.nav-item.active {
+  background: #E8580A;
+  color: white;
+  box-shadow: 0 4px 12px rgba(232,88,10,0.5);
+}
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.notif-item { position: relative; }
+.logout-item:hover { background: rgba(255, 80, 80, 0.2) !important; color: #ff7875 !important; }
+
+/* 通知面板 */
+.notification-panel {
+  width: 280px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notif-title {
+  font-weight: 600;
+  color: #3D1C00;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.notif-empty {
+  color: #aaa;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+}
+
+.friend-req-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 !important;
+  border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.req-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.req-name { font-weight: 500; color: #3D1C00; font-size: 14px; }
+
+.req-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.req-accept-btn {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  border: none !important;
+}
+
+/* 主内容 */
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 占位（已弃用） */
+.contacts-placeholder {
+  display: none;
+}

@@ -1,0 +1,273 @@
+/* ===== 会话列表 ===== */
+.conv-list {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #FFE8D6;
+  height: 100%;
+}
+
+.conv-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #FFE8D6;
+}
+
+.conv-search-input {
+  flex: 1;
+  border-radius: 20px !important;
+  border-color: #FFD49E !important;
+  background: #FFF8F2 !important;
+  font-size: 13px !important;
+}
+
+.conv-search-input:focus {
+  border-color: #E8580A !important;
+  box-shadow: none !important;
+}
+
+.add-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8580A, #FF8C42);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(232,88,10,0.3);
+}
+
+.add-btn:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* 列表项 */
+.conv-items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.conv-items::-webkit-scrollbar { width: 3px; }
+.conv-items::-webkit-scrollbar-thumb { background: #FFD49E; }
+
+.conv-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 0;
+}
+
+.conv-item:hover { background: #FFF5EE; }
+.conv-item.active { background: #FFF0E6; }
+.conv-item.active .conv-name { color: #E8580A; font-weight: 600; }
+
+.conv-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.conv-avatar {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+.online-badge {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  border: 2px solid white;
+}
+
+.online-badge.online { background: #52c41a; }
+
+.conv-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.conv-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conv-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3D1C00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.conv-time {
+  font-size: 11px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.conv-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conv-last {
+  font-size: 12px;
+  color: #aaa;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 170px;
+}
+
+.unread-badge .ant-badge-count {
+  background: #E8580A !important;
+  box-shadow: none !important;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 10px;
+}
+
+/* 添加好友弹窗 */
+.add-friend-search { margin-bottom: 16px; }
+
+.search-results { max-height: 320px; overflow-y: auto; }
+
+.search-user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.search-user-info { flex: 1; }
+.search-user-name { font-weight: 500; color: #3D1C00; font-size: 14px; }
+.search-user-username { font-size: 12px; color: #aaa; }
+
+.add-user-btn {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  border: none !important;
+  border-radius: 6px !important;
+}
+
+.searching, .no-result {
+  text-align: center;
+  color: #aaa;
+  padding: 20px;
+  font-size: 13px;
+}
+
+/* 群聊Avatar样式 */
+.group-avatar {
+  background: linear-gradient(135deg, #7B5CF0, #A78BFA) !important;
+  font-size: 18px !important;
+}
+
+/* 群聊标识小圆点 */
+.group-badge {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B5CF0, #A78BFA);
+  border: 2px solid white;
+}
+
+/* 创建群聊Modal样式 */
+.create-group-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.group-name-input {
+  border-radius: 8px !important;
+  border-color: #FFD49E !important;
+  font-size: 14px !important;
+}
+
+.group-name-input:focus {
+  border-color: #E8580A !important;
+  box-shadow: 0 0 0 2px rgba(232,88,10,0.1) !important;
+}
+
+.friend-select-label {
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+  margin-bottom: -4px;
+}
+
+.friend-select-list {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #FFE8D6;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: #FFF8F2;
+}
+
+.friend-select-list::-webkit-scrollbar { width: 3px; }
+.friend-select-list::-webkit-scrollbar-thumb { background: #FFD49E; border-radius: 2px; }
+
+.friend-checkbox-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 4px 0 !important;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.friend-checkbox-item:last-child { border-bottom: none; }
+
+.friend-checkbox-name {
+  font-weight: 500;
+  color: #3D1C00;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.friend-checkbox-username {
+  font-size: 12px;
+  color: #bbb;
+}
+
+.selected-count {
+  font-size: 13px;
+  color: #E8580A;
+  text-align: right;
+  font-weight: 500;
+}
+
+.no-friends-tip {
+  text-align: center;
+  color: #bbb;
+  font-size: 13px;
+  padding: 20px 0;
+}

@@ -1,0 +1,325 @@
+/* ===== 朋友圈 ===== */
+.moments-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #FFF8F2;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.moments-container::-webkit-scrollbar { width: 4px; }
+.moments-container::-webkit-scrollbar-thumb { background: #FFD49E; border-radius: 2px; }
+
+/* 发布区 */
+.moments-post-card {
+  display: flex;
+  gap: 12px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(232,88,10,0.08);
+  border: 1px solid #FFE8D6;
+}
+
+.post-avatar {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  flex-shrink: 0;
+}
+
+.post-input-area { flex: 1; }
+
+.post-textarea {
+  border-color: #FFD49E !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  resize: none !important;
+}
+
+.post-textarea:focus {
+  border-color: #E8580A !important;
+  box-shadow: 0 0 0 2px rgba(232,88,10,0.1) !important;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.post-img-icon {
+  font-size: 20px;
+  color: #E8580A;
+  cursor: pointer;
+}
+
+/* 图片按鈕（带计数徽标） */
+.post-img-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+  color: #bbb;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.post-img-btn:hover,
+.post-img-btn.active {
+  color: #E8580A;
+  background: #FFF0E6;
+}
+
+.img-count-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #E8580A;
+  background: #FFE8D6;
+  border-radius: 8px;
+  padding: 0 5px;
+  line-height: 16px;
+}
+
+.post-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 图片预览网格 */
+.post-image-preview {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 6px;
+}
+
+.post-image-preview.grid-1 { grid-template-columns: repeat(1, 100px); }
+.post-image-preview.grid-2 { grid-template-columns: repeat(3, 90px); }
+.post-image-preview.grid-3 { grid-template-columns: repeat(3, 90px); }
+
+.preview-item {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+.preview-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #FFE8D6;
+  display: block;
+}
+
+.preview-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 18px;
+  color: #ff4d4f;
+  cursor: pointer;
+  background: white;
+  border-radius: 50%;
+  line-height: 1;
+  z-index: 2;
+  transition: transform 0.2s;
+}
+
+.preview-remove:hover {
+  transform: scale(1.2);
+}
+
+/* 继续添加按鈕 */
+.preview-add {
+  width: 90px;
+  height: 90px;
+  border: 2px dashed #FFD49E;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #E8580A;
+  gap: 4px;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.preview-add:hover {
+  border-color: #E8580A;
+  background: #FFF8F2;
+}
+
+.preview-add-icon {
+  font-size: 22px;
+}
+
+/* 加载状态 */
+.moments-loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+.post-submit-btn {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  border: none !important;
+  border-radius: 6px !important;
+}
+
+/* 动态卡片 */
+.moments-list { display: flex; flex-direction: column; gap: 12px; }
+
+.moment-card {
+  display: flex;
+  gap: 12px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(232,88,10,0.06);
+  border: 1px solid #FFE8D6;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.moment-user-avatar {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  flex-shrink: 0;
+}
+
+.moment-body { flex: 1; min-width: 0; }
+
+.moment-user-name {
+  font-weight: 600;
+  color: #E8580A;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.moment-content {
+  color: #3D1C00;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+}
+
+/* 图片网格 */
+.moment-images {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.moment-images.grid-1 { grid-template-columns: 1fr; max-width: 240px; }
+.moment-images.grid-2 { grid-template-columns: repeat(2, 1fr); max-width: 300px; }
+.moment-images.grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+.moment-img {
+  width: 100% !important;
+  height: 100px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+}
+
+/* 底栏 */
+.moment-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.moment-time {
+  font-size: 12px;
+  color: #bbb;
+}
+
+.moment-actions-bar {
+  display: flex;
+  gap: 16px;
+}
+
+.moment-action {
+  font-size: 14px;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.moment-action:hover { color: #E8580A; }
+
+/* 点赞 */
+.likes-row {
+  font-size: 13px;
+  color: #888;
+  background: #FFF8F2;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 评论 */
+.comments-list {
+  background: #FFF8F2;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+}
+
+.comment-item {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.comment-author {
+  color: #E8580A;
+  font-weight: 500;
+}
+
+.comment-text { color: #444; }
+
+/* 评论输入 */
+.comment-input-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.comment-input {
+  flex: 1;
+  border-radius: 8px !important;
+  border-color: #FFD49E !important;
+  font-size: 13px !important;
+}
+
+.comment-submit {
+  background: linear-gradient(135deg, #E8580A, #FF8C42) !important;
+  border: none !important;
+  border-radius: 6px !important;
+}
